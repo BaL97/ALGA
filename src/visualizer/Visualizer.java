@@ -1,11 +1,9 @@
 package visualizer;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Random;
 
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -13,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class Visualizer extends Application
 {
@@ -23,8 +20,8 @@ public class Visualizer extends Application
     
     static final Integer LENGTH = 10000;
 
-    static Integer[] A = new Integer[LENGTH];
-    static RectangleArray R = new RectangleArray(LENGTH);
+    static IndexedEntry<Integer>[] A = (IndexedEntry<Integer> [])new IndexedEntry[LENGTH];
+    static HashMap<Integer,Rectangle> rectangles = new HashMap<Integer,Rectangle>();
 
     final static double width = ((double)WIDTH) / LENGTH;
 
@@ -37,10 +34,12 @@ public class Visualizer extends Application
 	
 	fillArray(A);
 
+	ArrayMergeSort(A);
+	
 	fillR(A, HEIGHT, width);
 
 	
-	root.getChildren().addAll(R.rectangles());
+	root.getChildren().addAll(rectangles.values());
 
 	s = new Scene(root, WIDTH, HEIGHT);
 
@@ -50,20 +49,6 @@ public class Visualizer extends Application
 	primaryStage.setScene(s);
 	primaryStage.show();
 	
-	timeline = new Timeline();
-	timeline.setCycleCount(1);
-	timeline.setAutoReverse(false);
-	timeline.play();
-	timer = new AnimationTimer()
-		{
-
-		    @Override
-		    public void handle(long now)
-		    {
-		    }
-	    
-		};
-	timer.start();
     }
     
     
@@ -72,31 +57,31 @@ public class Visualizer extends Application
 	launch(args);
     }
     
-    public void fillArray(Integer[] A)
+    public void fillArray(IndexedEntry<Integer>[] A)
     {
 	Random r = new Random();
 
 	for (int i = 0; i < A.length; i++)
 	{
-	   A[i] = r.nextInt(1000);
+	   A[i] = new IndexedEntry<Integer>(i,r.nextInt());
 	}
 	
     }
     
-    public static int ArrayMax(Integer[] A)
+    public static int ArrayMax(IndexedEntry<Integer>[] A)
     {
-	int max = A[0];
+	int max = A[0].getValue();
 	
 	for (int i = 1; i < A.length; i++)
 	{
-	   if(A[i] > max) 
-	       max = A[i];
+	   if(A[i].compareTo(max) > 0) 
+	       max = A[i].getValue();
 	}
 	
 	return max;
     }
     
-    public static void fillR(Integer[] A, Integer HEIGHT, double WIDTH)
+    public static void fillR(IndexedEntry<Integer>[] A, Integer HEIGHT, double WIDTH)
     {
 	int max = ArrayMax(A);
 
@@ -104,24 +89,24 @@ public class Visualizer extends Application
 	
 	for (int i = 0; i < A.length; i++)
 	{
-	    double height = A[i] / (double)max * HEIGHT;
+	    double height = A[i].getValue() / (double)max * HEIGHT;
 	    int yPosition = (int) (HEIGHT - height);
 
 	    Rectangle r = new Rectangle(xPosition, yPosition, WIDTH, height);
 	    r.setFill(Color.WHITE);
-	    R.getRectangles()[i] = new RectangleEntry(A[i],r);
+	    rectangles.put(A[i].getIndex(), r);
 
 	    xPosition += WIDTH;
 	}
 	
     }
 
-    public static void ArrayMergeSort(RectangleArray A) 
+    public <T extends Comparable<T>> void ArrayMergeSort(T[] A) 
     {
-	if (A.length() > 1)
+	if (A.length > 1)
 	{
 	    Integer first = 0;
-	    Integer last = A.length() - 1;
+	    Integer last = A.length - 1;
 	    Integer mid = (first + last) / 2;
 	    ArrayMergeSort(A, first, mid);
 	    ArrayMergeSort(A, mid + 1, last);
@@ -129,7 +114,7 @@ public class Visualizer extends Application
 	}
     }
 
-    public static void ArrayMergeSort(RectangleArray A, Integer first, Integer last) 
+    public <T extends Comparable<T>> void ArrayMergeSort(T[] A, Integer first, Integer last) 
     {
 	if (first < last)
 	{
@@ -140,23 +125,23 @@ public class Visualizer extends Application
 	}
     }
 
-    private static void Merge(RectangleArray A, Integer first, Integer mid, Integer last) 
+    private <T extends Comparable<T>> void Merge(T[] A, Integer first, Integer mid, Integer last) 
     {
 	Integer i, j, k, h;
-	RectangleArray B = new RectangleArray(last);
+	T[] B = (T[]) new Comparable[last];
 	i = first;
 	j = mid + 1;
 	k = first;
 	while(i <= mid && j <= last)
 	{
-	    if (A.getRectangles()[i].compareTo(A.getRectangles()[j]) <= 0)
+	    if ((A[i].compareTo(A[j])) <= 0)
 	    {
-		B.getRectangles()[k] = A.getRectangles()[i];
+		B[k] = A[i];
 		i++;
 	    }
 	    else
 	    {
-		B.getRectangles()[k] = A.getRectangles()[j];
+		B[k] = A[j];
 		j++;
 	    }
 	    
@@ -167,13 +152,13 @@ public class Visualizer extends Application
 
 	for(h = mid; h >= i; h--)
 	{
-	    A.getRectangles()[j] = A.getRectangles()[h];
+	    A[j] = A[h];
 	    j--;
 	}
 	
 	for(i = first; i < k; i++)
 	{
-	    A.getRectangles()[i] = B.getRectangles()[i];
+	    A[i] = B[i];
 	}
     }
     
