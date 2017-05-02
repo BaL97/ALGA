@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Random;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -11,43 +13,46 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class Visualizer extends Application
 {
-    static final int WIDTH = 1000, HEIGHT = 750;
-    static Group root = new Group();
-    static Scene s;
-    
-    static final Integer LENGTH = 10000;
-
-    static IndexedEntry<Integer>[] A = (IndexedEntry<Integer> [])new IndexedEntry[LENGTH];
-    static HashMap<Integer,Rectangle> rectangles = new HashMap<Integer,Rectangle>();
-
-    final static double width = ((double)WIDTH) / LENGTH;
-
-    private static Timeline timeline;
-    private AnimationTimer timer;
-    
     @Override
     public void start(Stage primaryStage) 
     {
-	
+	prepareStage(primaryStage);
+	primaryStage.show();
+    }
+    
+    public void prepareStage(Stage stage)
+    {
+        Timeline timeline = new Timeline();
+	final Integer LENGTH = 10000;
+        final int WIDTH = 1000, HEIGHT = 750;
+        final double width = ((double)WIDTH) / LENGTH;
+        Group root = new Group();
+        IndexedEntry<Integer>[] A = (IndexedEntry<Integer> [])new IndexedEntry[LENGTH];
+        HashMap<Integer,Rectangle> rectangles = new HashMap<Integer,Rectangle>();
+        Scene s;
+
 	fillArray(A);
 
-	ArrayMergeSort(A);
-	
-	fillR(A, HEIGHT, width);
+	fillR(rectangles,A, HEIGHT, width);
 
-	
 	root.getChildren().addAll(rectangles.values());
 
 	s = new Scene(root, WIDTH, HEIGHT);
 
 	s.setFill(Color.BLACK);
+
 	
-	primaryStage.setTitle("ALGA");
-	primaryStage.setScene(s);
-	primaryStage.show();
+	stage.setTitle("ALGA");
+	stage.setScene(s);
+	stage.show();
+
+	timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.getKeyFrames().addAll(mergesort.Array.mergesort(A, rectangles));
+        timeline.play();
 	
     }
     
@@ -63,12 +68,12 @@ public class Visualizer extends Application
 
 	for (int i = 0; i < A.length; i++)
 	{
-	   A[i] = new IndexedEntry<Integer>(i,r.nextInt());
+	   A[i] = new IndexedEntry<Integer>(i,r.nextInt(1000));
 	}
 	
     }
     
-    public static int ArrayMax(IndexedEntry<Integer>[] A)
+    public int ArrayMax(IndexedEntry<Integer>[] A)
     {
 	int max = A[0].getValue();
 	
@@ -81,7 +86,7 @@ public class Visualizer extends Application
 	return max;
     }
     
-    public static void fillR(IndexedEntry<Integer>[] A, Integer HEIGHT, double WIDTH)
+    public void fillR(HashMap<Integer,Rectangle> rectangles,IndexedEntry<Integer>[] A, Integer HEIGHT, double WIDTH)
     {
 	int max = ArrayMax(A);
 
@@ -100,66 +105,21 @@ public class Visualizer extends Application
 	}
 	
     }
-
-    public <T extends Comparable<T>> void ArrayMergeSort(T[] A) 
+    
+    public static KeyFrame swapRectangles(Integer i, Integer j, HashMap<Integer,Rectangle> rectangles)
     {
-	if (A.length > 1)
-	{
-	    Integer first = 0;
-	    Integer last = A.length - 1;
-	    Integer mid = (first + last) / 2;
-	    ArrayMergeSort(A, first, mid);
-	    ArrayMergeSort(A, mid + 1, last);
-	    Merge(A, first, mid, last);
-	}
+	KeyValue kv = new KeyValue(rectangles.get(i).xProperty(), rectangles.get(j).getX());
+	KeyValue kv2 = new KeyValue(rectangles.get(j).xProperty(), rectangles.get(i).getX());
+	Duration d = Duration.millis(1000);
+	KeyFrame kf = new KeyFrame(d,kv,kv2);
+
+	Double xtmp = rectangles.get(i).getX();
+	rectangles.get(i).setX(rectangles.get(j).getX());
+	rectangles.get(j).setX(xtmp);
+
+	return kf;
     }
 
-    public <T extends Comparable<T>> void ArrayMergeSort(T[] A, Integer first, Integer last) 
-    {
-	if (first < last)
-	{
-	    Integer mid = (first + last) / 2;
-	    ArrayMergeSort(A, first, mid);
-	    ArrayMergeSort(A, mid + 1, last);
-	    Merge(A, first, mid, last);
-	}
-    }
 
-    private <T extends Comparable<T>> void Merge(T[] A, Integer first, Integer mid, Integer last) 
-    {
-	Integer i, j, k, h;
-	T[] B = (T[]) new Comparable[last];
-	i = first;
-	j = mid + 1;
-	k = first;
-	while(i <= mid && j <= last)
-	{
-	    if ((A[i].compareTo(A[j])) <= 0)
-	    {
-		B[k] = A[i];
-		i++;
-	    }
-	    else
-	    {
-		B[k] = A[j];
-		j++;
-	    }
-	    
-	    k++;
-	}
-	
-	j = last;
-
-	for(h = mid; h >= i; h--)
-	{
-	    A[j] = A[h];
-	    j--;
-	}
-	
-	for(i = first; i < k; i++)
-	{
-	    A[i] = B[i];
-	}
-    }
     
 }
