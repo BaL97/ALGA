@@ -1,13 +1,15 @@
 /*Da Fare:
- * Bottone clear
- * Input da file
  * Gestione di tutte le eccezioni
+ * Abbellire il codice
  */
 
 package Graphics;
 import visualizer.*;
 
 import java.awt.Choice;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -22,6 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class inputSelector {
@@ -29,6 +32,8 @@ public class inputSelector {
 	private static ArrayList<Comparable> inputArray=new ArrayList<Comparable>();
 	
 	public static Integer display(){
+		FileChooser loader=new FileChooser();
+		loader.setTitle("Select the input file");
 		Stage window = new Stage();
 		window.setTitle("Load Input");
 		ChoiceBox<String> choice=new ChoiceBox<>();
@@ -64,6 +69,14 @@ public class inputSelector {
 		//insert n
 		Label label=new Label("Insert n");
 		n.setPrefWidth(40);
+		
+		
+		Button clear=new Button("Clear");
+		clear.setOnAction(e->{
+			inputArray.clear();
+			input.clear();
+			input.appendText("Input preview:\n");
+		});
 
 		//Input Data manual(type.getValue(),data.getText())&&
 		TextField data=new TextField("data");
@@ -85,34 +98,28 @@ public class inputSelector {
 		choice.setOnAction(e->{
 			switch (choice.getValue()){
 			case "Input from file...":
-				/*choice 1 --> *open the file loader window
-				 *when the file is added control the input in runtime and throw the exception if is not right
-				 *if the input file is correct close the window with success message and at ok button action 
-				 *load the input into the algorithm
-				 */
 				add.setDisable(true);
 				data.setDisable(true);
 				n.setDisable(true);
 				gen.setDisable(true);
+				File file=loader.showOpenDialog(window);
+				if(file!=null){
+				if(fileOpen(file)){
+					input.clear();
+					input.appendText("Input preview:\n");
+					for(int i=0;i<inputArray.size();i++)
+						input.appendText(inputArray.get(i).toString()+"\n");
+					input.appendText("\nN = "+inputArray.size());}
+				else
+					AlertBox.display("Input file error!","Please check your input file and try again");}
 				break;
 			case "Random Input":
-				/*choice 2 --> 
-				*select type and the n
-				*autogenerate the input
-				*at the ok load input into the algorithm
-				*/
 				add.setDisable(true);
 				n.setDisable(false);
 				data.setDisable(true);
 				gen.setDisable(false);
 				break;
 			case "Manual Insert":
-				/*choice 3 --> 
-				*select type
-				*insert each data in the text field selecting adding 
-				*control the input data each time and increase the n value
-				* at ok action close the window and load input into the algorithm
-				*/
 				add.setDisable(false);
 				n.setDisable(true);
 				data.setDisable(false);
@@ -157,8 +164,9 @@ public class inputSelector {
 		selection.setConstraints(n, 2, 1);
 		selection.setConstraints(data, 0, 3);
 		selection.setConstraints(add, 1, 3);
+		selection.setConstraints(clear, 3, 3);
 		selection.setConstraints(gen, 3, 1);
-		selection.getChildren().addAll(choice,label,type,n,data,add,gen);
+		selection.getChildren().addAll(choice,label,type,n,data,add,gen,clear);
 		layout.setTop(selection);
 		layout.setCenter(input);
 		Scene scene=new Scene(layout);
@@ -215,19 +223,40 @@ public class inputSelector {
 				inputArray.add(k);}}
 	}
 	
-	public static String randomString(int length){
+	private static String randomString(int length){
 		Random rand = new Random();
 		StringBuffer tempStr = new StringBuffer();
 		tempStr.append("");
 		for (int i = 0; i < length; i++) {
 		int c = rand.nextInt(122 - 48) + 48;
 		if((c >= 58 && c <= 64) || (c >= 91 && c <= 96)){
-		i--;
-		continue;
-		}
-		tempStr.append((char)c);
-
-		}
+			i--;
+			continue;}
+		tempStr.append((char)c);}
 		return tempStr.toString();
 		}
+	
+	private static boolean fileOpen(File n){
+		inputArray.clear();
+		boolean flag=false;
+		try{
+			FileReader f;
+			f=new FileReader(n);
+			BufferedReader b;
+			b=new BufferedReader(f);
+			String s,t;
+			t=b.readLine();
+			if((t.equals("Double"))||(t.equals("Integer"))||(t.equals("String"))){
+				flag=true;
+				s=b.readLine();
+				while (s != null){
+					if(!manual(t,s))
+						flag=false;
+					s = b.readLine();
+				}
+			}
+			b.close();} catch (Exception e) {return false;}
+		return flag;
+	}
 }
+

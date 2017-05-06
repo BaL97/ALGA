@@ -17,7 +17,7 @@ public class AlertBox {
 		window.setMinWidth(250);
 		Label label= new Label();
 		label.setText(message);
-		label.setPadding(new Insets(5,0,10,0));
+		label.setPadding(new Insets(5,5,10,5));
 		
 		Button button=new Button("Ok");
 		
