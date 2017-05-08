@@ -1,5 +1,7 @@
 package Graphics;
-
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 
 import com.sun.corba.se.spi.orbutil.fsm.Input;
@@ -13,22 +15,25 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
 public class Main extends Application{
-
 	Stage window;
 	Scene scene;
 	Button play; //play the algorithm (select the speed in a menù)
 	Button back; //back one step
 	Button next; //next step
 	Button pause; //pause the algorithm
+	ArrayList<Comparable> input=new ArrayList<Comparable>();
 	
 	public static void main (String args[]){
 		launch(args);
@@ -46,10 +51,16 @@ public class Main extends Application{
 			closeProgram();	
 		});
 		
+		TextArea inputtext=new TextArea();
+		inputtext.setEditable(false);
+		inputtext.setText("Data:\n");
+		inputtext.setPrefSize(300, 300);
+		inputtext.setMaxHeight(300);
+		
 		//Top Menu
 		BorderPane topMenu=new BorderPane();
 		//MenuBar
-		MenuBar menu=this.setMenuBar();
+		MenuBar menu=this.setMenuBar(inputtext);
 		//FlowBar
 		HBox flowbar=this.setFlowControl();
 		
@@ -61,6 +72,7 @@ public class Main extends Application{
 		topMenu.setCenter(flowbar);
 		
 		layout.setTop(topMenu);
+		layout.setLeft(inputtext);
 		
 		scene=new Scene(layout,1500,800);
 		window.setScene(scene);
@@ -68,7 +80,7 @@ public class Main extends Application{
 		
 	}
 	
-	public MenuBar setMenuBar(){
+	public MenuBar setMenuBar(TextArea inputtext){
 			//File Menù
 				Menu file=new Menu("File");
 				MenuItem load = new MenuItem("Load Input...");
@@ -77,7 +89,13 @@ public class Main extends Application{
 				file.getItems().add(settings);
 				MenuItem exit=new MenuItem("Exit");
 				file.getItems().add(exit); //exit the program
-				load.setOnAction(e->loadWindow());
+				load.setOnAction(e->{
+					input=inputSelector.display();
+					for(int i=0;i<input.size();i++){
+						inputtext.appendText(input.get(i)+"\n");
+					}
+					inputtext.appendText("\n\nInput Dimension: "+input.size());
+				});
 				settings.setOnAction(e->settingsWindow());
 				exit.setOnAction(e->closeProgram());
 				
@@ -87,30 +105,21 @@ public class Main extends Application{
 				help.getItems().add(about); //load input
 				MenuItem git=new MenuItem("Git...");
 				help.getItems().add(git);
-				about.setOnAction(e->docWindow());
-				//git.setOnAction(e->);
+				about.setOnAction(e->About.display());
 				
-
+				 git.setOnAction(e->webPage.display("https://github.com/BaL97")	);
+				 
 				//main Menù Bar
 				MenuBar menu=new MenuBar();	
 				menu.getMenus().addAll(file,help);
 		return menu;
 	}
 	
-	private Object docWindow() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	private Object settingsWindow() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	private void loadWindow() {
-		// TODO Auto-generated method stub
-		ArrayList<Comparable> input=inputSelector.display();}
-
+		
 	private void closeProgram(){
 		boolean x=ConfirmBox.display("Exit", "Are you sure?");
 		if(x)

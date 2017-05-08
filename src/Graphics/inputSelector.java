@@ -45,6 +45,7 @@ public class inputSelector{
 		n.setPrefWidth(40);
 		TextArea input=new TextArea("Input preview:\n");
 		input.setDisable(false);
+		input.setEditable(false);
 		input.setPrefWidth(50);
 		input.setPrefHeight(100);
 		Label label=new Label("Insert n");
