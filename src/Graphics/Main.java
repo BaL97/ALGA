@@ -1,5 +1,7 @@
 package Graphics;
 
+import java.util.ArrayList;
+
 import com.sun.corba.se.spi.orbutil.fsm.Input;
 
 import javafx.application.Application;
@@ -107,8 +109,7 @@ public class Main extends Application{
 
 	private void loadWindow() {
 		// TODO Auto-generated method stub
-		Integer x=inputSelector.display();
-	}
+		ArrayList<Comparable> input=inputSelector.display();}
 
 	private void closeProgram(){
 		boolean x=ConfirmBox.display("Exit", "Are you sure?");
