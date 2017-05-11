@@ -1,0 +1,30 @@
+function merge (a[], left, center, right)
+    i ← left
+    j ← center + 1
+    k ← 0
+    b ← array temp size= right-left+1
+
+    while i ≤ center and j ≤ right do
+       if a[i] ≤ a[j] then
+          b[k] ← a[i]
+          i ← i + 1
+       else
+          b[k] ← a[j]
+          j ← j + 1
+       k ← k + 1
+    end while
+
+    while i ≤ center do
+       b[k] ← a[i]
+       i ← i + 1
+       k ← k + 1
+    end while
+
+    while j ≤ right do
+       b[k] ← a[j]
+       j ← j + 1
+       k ← k + 1
+    end while
+
+    for k ← left to right do
+       a[k] ← b[k-left]

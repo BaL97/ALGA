@@ -202,7 +202,6 @@ public class inputSelector{
 		
 		if(type.equals("Integer")){
 		for (int i=0;i<n;i++){
-			System.out.println("ok");
 			k=random.nextInt(1000);
 			inputArray.add(k);}}
 		else if(type.equals("Double")){
