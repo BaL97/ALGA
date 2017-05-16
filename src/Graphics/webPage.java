@@ -1,22 +1,16 @@
 package Graphics;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class webPage {
 
-	public static void display(String link){
+	public static void display(String link, String title){
 		
 		Stage window=new Stage();
-		window.setTitle(link);
-		
+		window.setTitle(title);
 		WebView webpage=new WebView();	
 		WebEngine engine=webpage.getEngine();
 		engine.load(link);

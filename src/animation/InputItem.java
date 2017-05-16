@@ -1,12 +1,9 @@
 package animation;
 
-import javafx.stage.*;
-import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.scene.control.*;
 
 
 import javafx.geometry.*;
@@ -41,7 +38,5 @@ public String getText(){
 public StackPane getPane(){
 	return stackPane;
 }
-
-
 }
 
