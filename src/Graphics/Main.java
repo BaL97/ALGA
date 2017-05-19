@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -18,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -105,6 +107,14 @@ public class Main extends Application{
 		Text credits=new Text();
 		credits.setText("\n\nWritten by: Andrea Berlingieri & Davide Balestra");
 		bottom.setBottom(credits);
+		VBox bottomright=new VBox();
+		bottomright.setPadding(new Insets(50,110,0,0));
+		Label lab=new Label("Merge Sort Sample\n");
+		lab.setPadding(new Insets(0,20,20,20));
+		Image sample=new Image("img/sample.png");
+		ImageView sampleimg=new ImageView(sample);
+		bottomright.getChildren().addAll(lab,sampleimg);
+		bottom.setRight(bottomright);
 		
 		//Top
 		BorderPane topMenu=new BorderPane();
