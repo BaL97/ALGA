@@ -2,7 +2,9 @@ package mergesort;
 
 import java.util.HashMap;
 
+import debug.Debug;
 import javafx.animation.SequentialTransition;
+import javafx.animation.Transition;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import visualizer.IndexedEntry;
@@ -28,27 +30,28 @@ import visualizer.Visualizer;
  * @author Andrea
  *
  */
-public class Array
+public class Merge
 {
+    public static Debug debug = new Debug();
+    static Rectangle[] C;
 
     /**
      * This method takes an array of a Comparable type T and sorts it.</br>
      * It calls another mergesort method which takes both the array and
      * the range over which the array must be sorted. It's convenient in that it requires
      * just the array to be sorted as a parameter, unlike the other mergesort method
+     * @param <T>
      * @param <T> The type of the array elements; must extend the Comparable interface
      * @param A An array of type T
      */
-    public <T extends Comparable<T>> void mergesort(T[] A) 
+    public static <T extends Comparable<T>> void mergesort(T[] A) 
     {
 	if (A.length > 1)
 	{
+	    T[] B = (T[]) new Comparable[A.length];
 	    Integer first = 0;
 	    Integer last = A.length - 1;
-	    Integer mid = (first + last) / 2;
-	    mergesort(A, first, mid);
-	    mergesort(A, mid + 1, last);
-	    merge(A, first, mid, last);
+	    mergesort(A, first, last,B);
 	}
     }
 
@@ -60,7 +63,7 @@ public class Array
      * @param first The first index of the range over which the array will be sorted
      * @param last The last index of the range over which the array will be sorted
      */
-    public <T extends Comparable<T>> void mergesort(T[] A, Integer first, Integer last) 
+    public static <T extends Comparable<T>> void mergesort(T[] A, Integer first, Integer last,T[] B) 
     {
 	/* When the two indexes coincide the part to be sorted has one element,
 	 * thus it's already sorted
@@ -68,17 +71,23 @@ public class Array
 	if (first < last)
 	{
 	    Integer mid = (first + last) / 2;
-	    mergesort(A, first, mid);
-	    mergesort(A, mid + 1, last);
-	    merge(A, first, mid, last);
+	    mergesort(A, first, mid,B);
+	    mergesort(A, mid + 1, last,B);
+	    merge(A, first, mid, last,B);
 	}
     }
 
-    private <T extends Comparable<T>> void merge(T[] A, Integer first, Integer mid, Integer last) 
+    /**
+     * This method merges two sorted parts of an array, limited by first and mid and mid + 1 and last, into 
+     * a sorted array
+     * @param A The array where the merge occurs
+     * @param first The first index of the first part to be merged
+     * @param mid The second index of the first part to be merged; mid + 1 is the first index for the second part
+     * @param last The second index of the second part to be merged
+     */
+    private static <T extends Comparable<T>> void merge(T[] A, Integer first, Integer mid, Integer last,T[] B) 
     {
 	Integer i, j, k, h;
-	@SuppressWarnings("unchecked")
-	T[] B = (T[]) new Comparable[last];
 	i = first;
 	j = mid + 1;
 	k = first;
@@ -123,7 +132,7 @@ public class Array
     } 
 
     /**
-     * Same as {@link mergesort.Array#mergesort(Comparable[])} in functionality. </br>
+     * Same as {@link mergesort.Merge#mergesort(Comparable[])} in functionality. </br>
      * It differs from it in that there are some modifications necessary to animate the mergesort algorithm.
      * @param A The array of IndexedEntry to be sorted. The parameter passed to IndexedEntry must be 
      * Comparable for the method to work, but it's needed that they are numeric with a total 
@@ -134,47 +143,33 @@ public class Array
      * @return a SequentialTransition which holds the transitions for the movement of the rectangles during the sorting process,
      * in the order they occurred
      */
-    public static <T extends Comparable<T>> SequentialTransition mergesort(IndexedEntry<T>[] A,HashMap<Integer,Rectangle> rectangles) 
+    public static void mergesort(Rectangle[] rectangles) 
     {
 	/* Any modifications to the Nodes added to the scene reflects on the scene
 	 * In order to "register" the changes in the rectangles without directly changing their position
 	 * a copy of the dictionary is made and passed as a parameter along with the others
 	 */
-	HashMap<Integer,Rectangle> copy = new HashMap<Integer,Rectangle>();
-	for(int i = 0; i < A.length; i++)
-	{
-	    /* A new Rectangle with the same attributes as the one in the first dictionary
-	     * is created, so that they are not bound to the nodes of the scene (even though
-	     * all we need is the X position of a rectangle and its index, as the first is the only
-	     * thing that changes during the sorting process
-	     */
-	    Rectangle R = new Rectangle(rectangles.get(i).getX(), rectangles.get(i).getY(), rectangles.get(i).getWidth(), rectangles.get(i).getHeight());
-	    R.setFill(Color.WHITE);
-	    copy.put(i,R);
-	}
+	//Rectangle[] copy = new Rectangle[rectangles.length];
+	//debug.printMaps(rectangles, copy);
 
-        SequentialTransition s, s1 = null, s2 = null, s3 = null;
-	if (A.length > 1)
+	if (rectangles.length > 1)
 	{
+	    C = new Rectangle[rectangles.length];
 	    Integer first = 0;
-	    Integer last = A.length - 1;
-	    Integer mid = (first + last) / 2;
+	    Integer last = rectangles.length - 1;
 	    /*
 	     * Each part of the sorting process generates a SequentialTransition
 	     * The result, which is returned, is a combination of the parts
 	     */
-	    s1 = mergesort(A,first, mid, rectangles,copy);
-	    s2 = mergesort(A,mid + 1, last,rectangles,copy);
-	    s3 = merge(A,first,mid,last,rectangles,copy);
+	    mergesort(rectangles,first, last);
 	}
-	s = composeSequences(s1,s2,s3);
-	return s;
     }
 
+
     /**
-     * Same as {@link mergesort.Array#mergesort(Comparable[], Integer, Integer)} in functionality, 
-     * differs from it for the same reason {@link mergesort.Array#mergesort(IndexedEntry[], HashMap)} 
-     * differs from {@link mergesort.Array#mergesort(Comparable[])} (see {@link mergesort.Array#mergesort(IndexedEntry[], HashMap)}
+     * Same as {@link mergesort.Merge#mergesort(Comparable[], Integer, Integer)} in functionality, 
+     * differs from it for the same reason {@link mergesort.Merge#mergesort(IndexedEntry[], HashMap)} 
+     * differs from {@link mergesort.Merge#mergesort(Comparable[])} (see {@link mergesort.Merge#mergesort(IndexedEntry[], HashMap)}
      * for details)
      * @param A	The array of IndexedEntry to be sorted
      * @param first The first end of the range the array must be sorted on
@@ -183,31 +178,22 @@ public class Array
      * @param copy A copy-dictionary of the above parameter used for modifications that affect the logic of the animation,
      * but not the animation itself (at least not directly)
      * @return A SequentialTransition which contains the parts of the animation, which are generated and collected in the 
-     * {@link mergesort.Array#merge(IndexedEntry[], Integer, Integer, Integer, HashMap, HashMap)} method 
+     * {@link mergesort.Merge#merge(IndexedEntry[], Integer, Integer, Integer, HashMap, HashMap)} method 
      * (could return null if no sequences are collected)
      */
-    public static <T extends Comparable<T>> SequentialTransition mergesort(IndexedEntry<T>[] A, Integer first, Integer last,HashMap<Integer,Rectangle> rectangles,HashMap<Integer,Rectangle> copy) 
+    public static <T extends Comparable<T>> void mergesort(Rectangle[] A, Integer first, Integer last) 
     {
-        SequentialTransition s = null;
-        SequentialTransition s1 = null, s2 = null, s3 = null;
 	if (first < last)
 	{
 	    Integer mid = (first + last) / 2;
-	    s1 = mergesort(A, first, mid, rectangles,copy);
-	    s2 = mergesort(A,mid + 1, last,rectangles,copy);
-	    s3 = merge(A,first,mid,last,rectangles,copy);
+	    mergesort(A, first, mid);
+	    mergesort(A,mid + 1, last);
+	    merge(A,first,mid,last);
 	}
-	if(composeSequences(s1,s2,s3) != null)
-	{
-	    s = new SequentialTransition();
-            s.getChildren().add(composeSequences(s1,s2,s3));
-	}
-	
-	return s;
     }
 
     /**
-     * Same as {@link Array#merge(Comparable[], Integer, Integer, Integer)} in functionality; differs from it in that it generates Transition Objects
+     * Same as {@link Merge#merge(Comparable[], Integer, Integer, Integer)} in functionality; differs from it in that it generates Transition Objects
      * and collects them in a SequentialTransition which is ultimately returned; an animation is generated to represent the comparison of two values,
      * another is generated to show the movement of the Rectangles from their position to the one they occupy in the sorted array (or in the sorted part
      * of it)
@@ -221,28 +207,26 @@ public class Array
      * @return a SequentialTransition which gathers the animations from the comparison and the animations from the "update" of the state of the part
      * of the array after the merge
      */
-    private static <T extends Comparable<T>> SequentialTransition merge(IndexedEntry<T>[] A, Integer first, Integer mid, Integer last,HashMap<Integer,Rectangle> rectangles, HashMap<Integer,Rectangle> copy ) 
+    private static <T extends Comparable<T>> void merge(Rectangle[] A, Integer first, Integer mid, Integer last) 
     {
 	// For notes of the merge part of this method, see merge, at line 77
-	SequentialTransition s = null;
 	Integer i, j, k, h;
-	@SuppressWarnings("unchecked")
-	IndexedEntry<T>[] B = new IndexedEntry[last];
+	Double leftmost = A[first].getTranslateX();
 	i = first;
 	j = mid + 1;
 	k = first;
 	while(i <= mid && j <= last)
 	{
-	    // Whene there's a comparison between A[i] and A[j], the corresponding Rectangles are colored Red, and then White again
-	    s = new SequentialTransition(Visualizer.colorRectangles(A[i].getIndex(),A[j].getIndex(),rectangles));
-	    if ((A[i].compareTo(A[j])) <= 0)
+	    // When there's a comparison between A[i] and A[j], the corresponding Rectangles are colored Red, and then White again
+	    Visualizer.colorRectangles(A[i],A[j]);
+	    if (A[i].getHeight() <= A[j].getHeight())
 	    {
-		B[k] = A[i];
+		C[k] = A[i];
 		i++;
 	    }
 	    else
 	    {
-		B[k] = A[j];
+		C[k] = A[j];
 		j++;
 	    }
 	    
@@ -259,15 +243,14 @@ public class Array
 	
 	for(i = first; i < k; i++)
 	{
-	    A[i] = B[i];
+	    A[i] = C[i];
 	}
 	/* After the merge is over, the position of the Rectangles is changed
 	 * In order to show that, an animation showing the "update" of the part of the
 	 * Array where the merge occurred is generated by the Visualizer.updatePosition method
 	 * and added to the SequentialTransition to be returned
 	 */
-	s.getChildren().add(Visualizer.updatePosition(A,first,last,rectangles,copy));
-	return s;
+	Visualizer.updatePosition(A,first,last,leftmost);
     }
 
     /**
@@ -304,22 +287,48 @@ public class Array
 	SequentialTransition s = new SequentialTransition();
 	if(s1 != null)
 	{
-	    s.getChildren().add(s1);
+	    s.getChildren().addAll(s1.getChildren());
 	    empty = false;
 	}
 	if(s2 != null)
 	{
-	    s.getChildren().add(s2);
+	    s.getChildren().addAll(s2.getChildren());
 	    empty = false;
 	}
 	if(s3 != null)
 	{
-	    s.getChildren().add(s3);
+	    s.getChildren().addAll(s3.getChildren());
 	    empty = false;
 	}
 	if(!empty)
 	    return s;
 	else
 	    return null;
+    }
+
+    /**
+     * Makes a copy of array of Rectangles rectangles into array copy
+     * @param rectangles The array to copy the rectangles from
+     * @param copy The array to copy the rectangles to
+     */
+    private static void makeACopy(Rectangle[] rectangles, Rectangle[] copy)
+    {
+	for(int i = 0; i < rectangles.length; i++)
+	{
+	    /* A new Rectangle with the same attributes as the one in the first dictionary
+	     * is created, so that they are not bound to the nodes of the scene (even though
+	     * all we need is the X position of a rectangle and its index, as the first is the only
+	     * thing that changes during the sorting process
+	     */
+	    Rectangle original = rectangles[i];
+	    Rectangle R = new Rectangle();
+            R.setX(original.getX());
+	    R.setY(original.getY());
+	    R.setWidth(original.getWidth());
+	    R.setHeight(original.getHeight());
+	    R.setFill(Color.WHITE);
+	    copy[i] = R;
+	}
+	
     }
 }
