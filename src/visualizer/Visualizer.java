@@ -1,10 +1,7 @@
 package visualizer;
 
-import java.util.HashMap;
 import java.util.Random;
 
-import debug.Debug;
-import javafx.animation.Animation;
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.SequentialTransition;
@@ -43,10 +40,8 @@ public class Visualizer extends Application
 	// Keeps all the nodes in the Scene
 	final Integer LENGTH = 100;
         final int WIDTH = 1000, HEIGHT = 750;
-        @SuppressWarnings("unchecked")
-	IndexedEntry<Integer>[] A = (IndexedEntry<Integer> [])new IndexedEntry[LENGTH];
+	Integer[] A = new Integer[LENGTH];
         // Dictionary that keeps all the rectangles in the scene
-        HashMap<Rectangle,Double> originalPositions = new HashMap<Rectangle,Double>();
         Rectangle[] rectangles = new Rectangle[LENGTH];
         Scene s;
         sequence = new SequentialTransition();
@@ -57,20 +52,9 @@ public class Visualizer extends Application
 	// R is filled with rectangles corresponding to the values of A
 	fillR(rectangles,A, HEIGHT, WIDTH);
 
-        for (int i = 0; i < rectangles.length; i++)
-	{
-	   originalPositions.put(rectangles[i], rectangles[i].getX()); 
-	}
-
 	// The rectangles are added to root group
 	root.getChildren().addAll(rectangles);
 
-        for(int i = 0; i < A.length; i++)
-        {
-            System.out.print(rectangles[i].getX() + "," + rectangles[i].getHeight() + " ");
-        }
-
-            System.out.println();
 	s = new Scene(root, WIDTH, HEIGHT);
 
 	s.setFill(Color.BLACK);
@@ -80,34 +64,9 @@ public class Visualizer extends Application
 	stage.show();
 
 	// All the Transitions from the mergesort are retrieved and added to sequence
-        mergesort.Merge.mergesort(rectangles);
-
-        
-
-        
-        
-        if(!true)
-        for (int i = 0; i < rectangles.length; i++)
-	{
-	    rectangles[i].setX(originalPositions.get(rectangles[i])); 
-	}
-        
-	
-	
+        Merge.mergesort(rectangles);
 
         sequence.play();
-        // Sends a message if the array is sorted, just debug stuff, to be removed
-        Merge.mergesort(A);
-        
-        /*
-        if(Merge.isSorted(A))
-            System.out.println("The Array is sorted");
-            */
-        for(int i = 0; i < A.length; i++)
-        {
-            System.out.print(rectangles[i].getX() + "," + rectangles[i].getHeight() + " ");
-        }
-        Merge.debug.close();
     }
     
     
@@ -121,15 +80,14 @@ public class Visualizer extends Application
      * the order of generation
      * @param A The array of IndexedEntry to be filled
      */
-    public void fillArray(IndexedEntry<Integer>[] A)
+    public void fillArray(Integer[] A)
     {
 	Random r = new Random();
 
 	for (int i = 0; i < A.length; i++)
 	{
-	   A[i] = new IndexedEntry<Integer>(i,r.nextInt(1000));
+	   A[i] = r.nextInt(1000);
 	}
-	
     }
     
     /**
@@ -160,11 +118,11 @@ public class Visualizer extends Application
      * @param HEIGHT The height of the area in which the values are represented
      * @param WIDTH The width of the area in which the values are represented
      */
-    public void fillR(Rectangle[] rectangles,IndexedEntry<Integer>[] A, Integer HEIGHT, Integer WIDTH)
+    public void fillR(Rectangle[] rectangles,Integer[] A, Integer HEIGHT, Integer WIDTH)
     {
 	
 	Double width = ((double) WIDTH)/A.length;
-	int max = ArrayMax(A).getValue();
+	int max = ArrayMax(A);
 
 	// the start position is 0
 	Double xPosition = 0.0;
@@ -177,7 +135,7 @@ public class Visualizer extends Application
 	     * so that values are represented with a Rectangle proportional to its 
 	     * magnitude in the array
 	     */
-	    Double height = A[i].getValue() / (double)max * HEIGHT;
+	    Double height = A[i] / (double)max * HEIGHT;
 	    // The y position of the top-left corner of the rectangle
 	    Double yPosition = (HEIGHT - height);
 
@@ -189,7 +147,7 @@ public class Visualizer extends Application
 	     * Each rectangles is inserted in the dictionary with the index of the value
 	     * it represents, so that a value and a rectangle are uniquely linked
 	     */
-	    rectangles[A[i].getIndex()] = r;
+	    rectangles[i]= r;
 	    // The position is always increased by the width of the rectangles
 	    xPosition += width;
 	}
@@ -244,22 +202,13 @@ public class Visualizer extends Application
 	Double dx = A[first].getWidth();
 	for(int i = first; i <= last; i++)
 	{
-	    //if(A[i].getTranslateX() != xPosition)
-	    //{
-                // Duration is one millisecond so that the animation is almost instantaneous
-                // The node to be animated is retrieved from the dictionary of rectangles in the scene
-                TranslateTransition t = new TranslateTransition(Duration.millis(1),A[i]);
-                // The "from" position is retrieved from the copy dictionary, which will be modified over the course of the animation
-                //t.setFromX(A[i].getX());
-                // The "to" position is calculated from the starting point with a shift that adds up
-                t.setToX(xPosition);
-                System.out.println(A[i].getX() + "->" + xPosition);
+            // Duration is one millisecond so that the animation is almost instantaneous
+            // The node to be animated is retrieved from the dictionary of rectangles in the scene
+            TranslateTransition t = new TranslateTransition(Duration.millis(1),A[i]);
+            // The "to" position is calculated from the starting point with a shift that adds up
+            t.setToX(xPosition);
 
-                //A[i].setX(xPosition);
-                //A[i].setTranslateX(xPosition);
-
-                sequence.getChildren().add(t);
-	    //}
+            sequence.getChildren().add(t);
 
 	    xPosition += dx;
 	}
