@@ -1,7 +1,8 @@
 package Graphics;
 import visualizer.*;
-
-import java.awt.Choice;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -15,33 +16,116 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class inputSelector {
+public class inputSelector{
 	
 	private static ArrayList<Comparable> inputArray=new ArrayList<Comparable>();
 	
-	public static Integer display(){
+	public static ArrayList<Comparable> display(){
+		//File loader
+		FileChooser loader=new FileChooser();
+		loader.setTitle("Select the input file");
+		
+		//Stage
 		Stage window = new Stage();
 		window.setTitle("Load Input");
-		ChoiceBox<String> choice=new ChoiceBox<>();
-		ChoiceBox<String> type=new ChoiceBox<>();
 		
-		
+		ChoiceBox<String> choice=setChoices();
+		ChoiceBox<String> type=setTypes();
+
+		//Layouts
+		GridPane selection=new GridPane();
 		GridPane buttons=new GridPane();
 		BorderPane layout=new BorderPane();
 		
+		//Texts
 		TextField n=new TextField();
-		//Ok-Cancel Buttons
+		n.setPrefWidth(40);
+		TextArea input=new TextArea("Input preview:\n");
+		input.setDisable(false);
+		input.setEditable(false);
+		input.setPrefWidth(50);
+		input.setPrefHeight(100);
+		Label label=new Label("Insert n");
+		TextField data=new TextField("data");
+		data.setPrefWidth(100);
+		
+		//BUTTONS
 		Button ok=new Button("Ok");
+		ok.setOnAction(e->{
+			if(inputArray.isEmpty())
+				AlertBox.display("Input Error!", "The input is empty, please insert some data");
+			else
+				window.close();
+		});
 		Button cancel=new Button("Cancel");
+		cancel.setOnAction(e->{
+			inputArray.clear();
+			window.close();
+		});			
+		Button clear=new Button("Clear");
+		clear.setOnAction(e->{
+			inputArray.clear();
+			input.clear();
+			input.appendText("Input preview:\n");
+		});
 		Button gen=new Button("Generate >>");
-		
-
-		
-		ok.setOnAction(e->loadInput(window,choice.getValue(), type.getValue()));
-		cancel.setOnAction(e->window.close());	
+		gen.setOnAction(e->{
+			input.clear();
+			input.appendText("Input preview:\n");
+			try{
+			if(n.getText().equals(""))
+				AlertBox.display("Input Error!", "Please insert n");
+			else if(type.getValue().equals("Select Input type..."))
+				AlertBox.display("Input Error!", "Please select a type");
+			else{
+				random(Integer.parseInt(n.getText()),type.getValue());
+				for(int i=0;i<Integer.parseInt(n.getText());i++)
+					input.appendText(inputArray.get(i).toString()+"\n");}}catch (Exception d) {AlertBox.display("Input Error!", "Wrong input for n");}
+		});
+		Button add=new Button("Add >>");
+		add.setOnAction(e->{
+			if(manual(type.getValue(),data.getText())&&(choice.getValue().equals("Manual Insert"))&&!(type.getValue().equals("Select Input type..."))&&!(data.getText().equals("data")))
+				input.appendText(data.getText()+"\n");
+			else
+				AlertBox.display("Input Error!", "Please check your input");
+		});
+				
+		//Choices actions
+		choice.setOnAction(e->{
+			switch (choice.getValue()){
+			case "Input from file...":
+				add.setDisable(true);
+				data.setDisable(true);
+				n.setDisable(true);
+				gen.setDisable(true);
+				File file=loader.showOpenDialog(window);
+				if(file!=null){
+				if(fileOpen(file)){
+					input.clear();
+					input.appendText("Input preview:\n");
+					for(int i=0;i<inputArray.size();i++)
+						input.appendText(inputArray.get(i).toString()+"\n");
+					input.appendText("\nN = "+inputArray.size());}
+				else
+					AlertBox.display("Input file error!","Please check your input file and try again");}
+				break;
+			case "Random Input":
+				add.setDisable(true);
+				n.setDisable(false);
+				data.setDisable(true);
+				gen.setDisable(false);
+				break;
+			case "Manual Insert":
+				add.setDisable(false);
+				n.setDisable(true);
+				data.setDisable(false);
+				gen.setDisable(true);
+				break;
+				}
+		});		
 		
 		//setting layouts
 		buttons.setConstraints(ok,1, 1);
@@ -51,87 +135,6 @@ public class inputSelector {
 		buttons.setHgap(10);
 		buttons.setAlignment(Pos.CENTER);
 		layout.setBottom(buttons);
-		
-		GridPane selection=new GridPane();
-		
-		//insert n
-		Label label=new Label("Insert n");
-		n.setPrefWidth(40);
-
-		//Input Data
-		TextField data=new TextField("data");
-		data.setPrefWidth(100);
-		Button add=new Button("Add >>");
-		add.setOnAction(e->manual(type.getValue(),data.getText()));
-				
-		//choicebox: set the input choice --> select 1-load file, 2-casual input (choice the type and the lenght), 3-Manual Insert
-		choice.getItems().add("Input from file...");
-		choice.getItems().add("Random Input");
-		choice.getItems().add("Manual Insert");
-		choice.getItems().add("Select Input source...");
-		choice.setValue("Select Input source...");
-		choice.setOnAction(e->{
-			switch (choice.getValue()){
-			case "Input from file...":
-				/*choice 1 --> *open the file loader window
-				 *when the file is added control the input in runtime and throw the exception if is not right
-				 *if the input file is correct close the window with success message and at ok button action 
-				 *load the input into the algorithm
-				 */
-				add.setDisable(true);
-				data.setDisable(true);
-				n.setDisable(true);
-				gen.setDisable(true);
-				break;
-			case "Random Input":
-				/*choice 2 --> 
-				*select type and the n
-				*autogenerate the input
-				*at the ok load input into the algorithm
-				*/
-				add.setDisable(true);
-				n.setDisable(false);
-				data.setDisable(true);
-				gen.setDisable(false);
-				break;
-			case "Manual Insert":
-				/*choice 3 --> 
-				*select type
-				*insert each data in the text field selecting adding 
-				*control the input data each time and increase the n value
-				* at ok action close the window and load input into the algorithm
-				*/
-				add.setDisable(false);
-				n.setDisable(true);
-				data.setDisable(false);
-				gen.setDisable(true);
-				break;
-				}
-		});
-		layout.setPadding(new Insets(10,10,10,10));	
-		
-		//Comparable type selection
-		type.getItems().add("Integer");
-		type.getItems().add("String");
-		type.getItems().add("Double");
-		type.getItems().add("Select Input type...");
-		type.setValue("Select Input type...");
-		
-		//Input flow
-		TextArea input=new TextArea("Input preview:\n");
-		input.setDisable(false);
-		input.setPrefWidth(50);
-		input.setPrefHeight(100);
-		
-		gen.setOnAction(e->{
-			input.clear();
-			input.appendText("Input preview:\n");
-			random(Integer.parseInt(n.getText()),type.getValue());
-			for(int i=0;i<Integer.parseInt(n.getText());i++)
-				input.appendText(inputArray.get(i).toString()+"\n");
-		});
-		
-		//layout
 		selection.setPadding(new Insets(10,10,10,10));
 		selection.setHgap(10);
 		selection.setVgap(10);
@@ -141,30 +144,55 @@ public class inputSelector {
 		selection.setConstraints(n, 2, 1);
 		selection.setConstraints(data, 0, 3);
 		selection.setConstraints(add, 1, 3);
+		selection.setConstraints(clear, 3, 3);
 		selection.setConstraints(gen, 3, 1);
-		selection.getChildren().addAll(choice,label,type,n,data,add,gen);
+		selection.getChildren().addAll(choice,label,type,n,data,add,gen,clear);
 		layout.setTop(selection);
 		layout.setCenter(input);
+		layout.setPadding(new Insets(10,10,10,10));	
 		Scene scene=new Scene(layout);
 		window.setScene(scene);
 		window.showAndWait();
 		
-	
+		return inputArray;	
+	}
+
+	private static ChoiceBox<String> setTypes() {
+		ChoiceBox<String> type=new ChoiceBox<String>();
+		type.getItems().add("Integer");
+		type.getItems().add("String");
+		type.getItems().add("Double");
+		type.getItems().add("Select Input type...");
+		type.setValue("Select Input type...");
+		return type;
+	}
+
+	private static ChoiceBox<String> setChoices() {
+		ChoiceBox<String> choice=new ChoiceBox<String>();
+		choice.getItems().add("Input from file...");
+		choice.getItems().add("Random Input");
+		choice.getItems().add("Manual Insert");
+		choice.getItems().add("Select Input source...");
+		choice.setValue("Select Input source...");
+		return choice;
+	}
+
+	private static boolean manual(String type, String value) {
+		Comparable v=value;
+		try {
+			if(type.equals("Integer"))
+				v=Integer.parseInt(value); //catch exceptions
+			else if(type.equals("Double"))
+				v=Double.parseDouble(value); //catch exceptions
+		} catch (Exception e) {return false;}
 		
-		return(1);
-	}
-
-	private static ArrayList<Comparable> loadInput(Stage window, String source, String type) {
-		if(source.equals("Select Input type..."))
-			AlertBox.display("Input Error!", "Please select an Input source");
-		return inputArray;
-	}
-
-	private static void manual(String type, String value) {
-		Comparable v=(Comparable)value;
-		//controlla se il tipo corrisponde a quello selezionato
-		//controlla se il tipo corrisponde a quelli gia inseriti in inputArray o inputArray è vuoto
-		//se supera i controlli lo aggiunge ad inputArray
+		if((inputArray.isEmpty())){
+			inputArray.add(v);
+			return true;}
+		else if ((inputArray.get(0).getClass().getName().equals(v.getClass().getName()))){
+			inputArray.add(v);
+			return true;}
+		return false;
 	}
 
 	private static void random(Integer n, String type) {
@@ -174,7 +202,6 @@ public class inputSelector {
 		
 		if(type.equals("Integer")){
 		for (int i=0;i<n;i++){
-			System.out.println("ok");
 			k=random.nextInt(1000);
 			inputArray.add(k);}}
 		else if(type.equals("Double")){
@@ -188,20 +215,41 @@ public class inputSelector {
 				inputArray.add(k);}}
 	}
 	
-	public static String randomString(int length){
+	private static String randomString(int length){
 		Random rand = new Random();
 		StringBuffer tempStr = new StringBuffer();
 		tempStr.append("");
 		for (int i = 0; i < length; i++) {
 		int c = rand.nextInt(122 - 48) + 48;
 		if((c >= 58 && c <= 64) || (c >= 91 && c <= 96)){
-		i--;
-		continue;
-		}
-		tempStr.append((char)c);
-
-		}
+			i--;
+			continue;}
+		tempStr.append((char)c);}
 		return tempStr.toString();
 		}
-
+	
+	private static boolean fileOpen(File n){
+		inputArray.clear();
+		boolean flag=false;
+		try{
+			FileReader f;
+			f=new FileReader(n);
+			BufferedReader b;
+			b=new BufferedReader(f);
+			String s,t;
+			t=b.readLine();
+			if((t.equals("Double"))||(t.equals("Integer"))||(t.equals("String"))){
+				flag=true;
+				s=b.readLine();
+				while (s != null){
+					if(!manual(t,s))
+						flag=false;
+					s = b.readLine();
+				}
+			}
+			b.close();} catch (Exception e) {return false;}
+		return flag;
+	}
 }
+
+

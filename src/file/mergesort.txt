@@ -1,0 +1,27 @@
+MERGE SORT 
+
+
+Description of algorithm
+
+Algorithm based on Divide-et-impera technique.
+It consists on divide recursively the array in 
+two segments and call the recursive function on
+each segment.
+After the recursive call, the mergesort procedure
+call a merge function that merges the two segment
+of the array in one sorted array.
+
+
+Pseudocode
+
+function mergesort (a[], left, right)
+    if left < right then
+        center ← (left + right) / 2
+        mergesort(a, left, center)
+        mergesort(a, center+1, right)
+        merge(a, left, center, right)
+
+
+Statistics
+
+Complexity: O(n logn)
