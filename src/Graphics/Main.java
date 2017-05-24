@@ -1,9 +1,9 @@
 package Graphics;
-import animation.*;
-import mergesort.*;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -212,7 +212,7 @@ public class Main extends Application{
 		HBox left=new HBox();
 		Text code=new Text();
 		try{
-			f=new FileReader("file/mergesort.txt");
+			f=new FileReader("src/file/mergesort.txt");
 			b=new BufferedReader(f);
 			String text="";
 			String line = b.readLine();
@@ -224,7 +224,7 @@ public class Main extends Application{
 		left.setPadding(new Insets(0,0,10,40));
 		Text merge=new Text();
 		try{
-			f=new FileReader("file/merge.txt");
+			f=new FileReader("src/file/merge.txt");
 			b=new BufferedReader(f);
 			String text="";
 			String line = b.readLine();
