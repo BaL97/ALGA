@@ -2,10 +2,6 @@ package mergesort;
 
 import java.util.HashMap;
 
-import debug.Debug;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Transition;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import visualizer.IndexedEntry;
 import visualizer.Visualizer;
@@ -32,7 +28,6 @@ import visualizer.Visualizer;
  */
 public class Merge
 {
-    public static Debug debug = new Debug();
     static Rectangle[] C;
 
     /**
@@ -48,6 +43,7 @@ public class Merge
     {
 	if (A.length > 1)
 	{
+	    @SuppressWarnings("unchecked")
 	    T[] B = (T[]) new Comparable[A.length];
 	    Integer first = 0;
 	    Integer last = A.length - 1;
@@ -269,66 +265,4 @@ public class Merge
 	return true;
     } 
 
-    /**
-     * Given 3 SequentialTransition Objects (even null), it composes orderly them and returns
-     * the composition; if all of them are null, the return value is null as well
-     * @param s1 The first SequentialTransition in the composition
-     * @param s2 The second SequentialTransition in the composition
-     * @param s3 The third SequentialTransition in the composition
-     * @return The composition of the sequences, in the order they're given, if at least one non-null argument is passed; null otherwise
-     */
-    private static SequentialTransition composeSequences(SequentialTransition s1, SequentialTransition s2,
-	    SequentialTransition s3)
-    {
-	/* By default, the composition is empty; if at least one non-null SequentialTransition
-	 * is passed, this boolean flag is set to false
-	 */
-	Boolean empty = true;
-	SequentialTransition s = new SequentialTransition();
-	if(s1 != null)
-	{
-	    s.getChildren().addAll(s1.getChildren());
-	    empty = false;
-	}
-	if(s2 != null)
-	{
-	    s.getChildren().addAll(s2.getChildren());
-	    empty = false;
-	}
-	if(s3 != null)
-	{
-	    s.getChildren().addAll(s3.getChildren());
-	    empty = false;
-	}
-	if(!empty)
-	    return s;
-	else
-	    return null;
-    }
-
-    /**
-     * Makes a copy of array of Rectangles rectangles into array copy
-     * @param rectangles The array to copy the rectangles from
-     * @param copy The array to copy the rectangles to
-     */
-    private static void makeACopy(Rectangle[] rectangles, Rectangle[] copy)
-    {
-	for(int i = 0; i < rectangles.length; i++)
-	{
-	    /* A new Rectangle with the same attributes as the one in the first dictionary
-	     * is created, so that they are not bound to the nodes of the scene (even though
-	     * all we need is the X position of a rectangle and its index, as the first is the only
-	     * thing that changes during the sorting process
-	     */
-	    Rectangle original = rectangles[i];
-	    Rectangle R = new Rectangle();
-            R.setX(original.getX());
-	    R.setY(original.getY());
-	    R.setWidth(original.getWidth());
-	    R.setHeight(original.getHeight());
-	    R.setFill(Color.WHITE);
-	    copy[i] = R;
-	}
-	
-    }
 }
