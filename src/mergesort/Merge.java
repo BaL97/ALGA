@@ -3,7 +3,6 @@ package mergesort;
 import java.util.HashMap;
 
 import javafx.scene.shape.Rectangle;
-import visualizer.IndexedEntry;
 import visualizer.Visualizer;
 
 /**

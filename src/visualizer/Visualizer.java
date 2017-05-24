@@ -1,5 +1,6 @@
 package visualizer;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.animation.FillTransition;
@@ -23,8 +24,10 @@ import mergesort.Merge;
 public class Visualizer extends Application
 {
     public static SequentialTransition sequence; 
-    public static Group root = new Group();
-
+    public static Group root;
+    public static Double doubleArray[];
+    public static Integer integerArray[];
+    public static Boolean doubleFlag;
     @Override
     public void start(Stage primaryStage) 
     {
@@ -35,22 +38,23 @@ public class Visualizer extends Application
      * Prepares the stage and handles the animation part
      * @param stage The stage to be handled, (primaryStage)
      */
-    public void prepareStage(Stage stage)
+    public static void prepareStage(Stage stage)
     {
 	// Keeps all the nodes in the Scene
-	final Integer LENGTH = 100;
+	final Integer LENGTH = doubleFlag ? doubleArray.length : integerArray.length;
         final int WIDTH = 1000, HEIGHT = 750;
-	Integer[] A = new Integer[LENGTH];
+        root = new Group();
+        
         // Dictionary that keeps all the rectangles in the scene
         Rectangle[] rectangles = new Rectangle[LENGTH];
         Scene s;
         sequence = new SequentialTransition();
         
         // A is filled with random values
-	fillArray(A);
-
-	// R is filled with rectangles corresponding to the values of A
-	fillR(rectangles,A, HEIGHT, WIDTH);
+        if(doubleFlag)
+        	fillRDouble(rectangles, HEIGHT, WIDTH);
+        else
+        	fillRInt(rectangles,HEIGHT,WIDTH);
 
 	// The rectangles are added to root group
 	root.getChildren().addAll(rectangles);
@@ -69,6 +73,29 @@ public class Visualizer extends Application
         sequence.play();
     }
     
+    public static void handleDoubleArray(ArrayList<Double> L)
+    {
+    	doubleArray = new Double[L.size()];
+    	int i = 0;
+    	for(Double d : L)
+    	{
+    		doubleArray[i] = d;
+    		i++;
+    	}
+    	doubleFlag = true;
+    }
+    
+    public static void handleIntArray(ArrayList<Integer> L)
+    {
+    	integerArray = new Integer[L.size()];
+    	int i = 0;
+    	for(Integer d : L)
+    	{
+    		integerArray[i] = d;
+    		i++;
+    	}
+    	doubleFlag = false;
+    }
     
     public static void main(String[] args)
     {
@@ -80,7 +107,7 @@ public class Visualizer extends Application
      * the order of generation
      * @param A The array of IndexedEntry to be filled
      */
-    public void fillArray(Integer[] A)
+    public static void fillArray(Integer[] A)
     {
 	Random r = new Random();
 
@@ -96,7 +123,7 @@ public class Visualizer extends Application
      * @param A The array of Comparable items 
      * @return The maximum value in the array
      */
-    public <T extends Comparable<T>> T ArrayMax(T[] A)
+    public static <T extends Comparable<T>> T ArrayMax(T[] A)
     {
 	T max = A[0];
 	
@@ -114,20 +141,20 @@ public class Visualizer extends Application
      * an array passed as parameter; The type of the array must be a numeric type with a total order
      * relationship
      * @param rectangles The dictionary of Integer-Rectangles to be filled
-     * @param A The array of numeric values to represent with rectangles
+     * @param integerArray The array of numeric values to represent with rectangles
      * @param HEIGHT The height of the area in which the values are represented
      * @param WIDTH The width of the area in which the values are represented
      */
-    public void fillR(Rectangle[] rectangles,Integer[] A, Integer HEIGHT, Integer WIDTH)
+    public static void fillRInt(Rectangle[] rectangles, Integer HEIGHT, Integer WIDTH)
     {
 	
-	Double width = ((double) WIDTH)/A.length;
-	int max = ArrayMax(A);
+	Double width = ((double) WIDTH)/integerArray.length;
+	int max = ArrayMax(integerArray);
 
 	// the start position is 0
 	Double xPosition = 0.0;
 	
-	for (int i = 0; i < A.length; i++)
+	for (int i = 0; i < integerArray.length; i++)
 	{
 	    /*
 	     * The height of each rectangle is defined by the ratio between the value
@@ -135,7 +162,7 @@ public class Visualizer extends Application
 	     * so that values are represented with a Rectangle proportional to its 
 	     * magnitude in the array
 	     */
-	    Double height = A[i] / (double)max * HEIGHT;
+	    Double height = integerArray[i] / (double)max * HEIGHT;
 	    // The y position of the top-left corner of the rectangle
 	    Double yPosition = (HEIGHT - height);
 
@@ -154,6 +181,41 @@ public class Visualizer extends Application
 	
     }
     
+    public static void fillRDouble(Rectangle[] rectangles, Integer HEIGHT, Integer WIDTH)
+    {
+	
+	Double width = ((double) WIDTH)/doubleArray.length;
+	double max = ArrayMax(doubleArray);
+
+	// the start position is 0
+	Double xPosition = 0.0;
+	
+	for (int i = 0; i < doubleArray.length; i++)
+	{
+	    /*
+	     * The height of each rectangle is defined by the ratio between the value
+	     * considered and the max value in the array times the height of the area,
+	     * so that values are represented with a Rectangle proportional to its 
+	     * magnitude in the array
+	     */
+	    Double height = doubleArray[i] / max * HEIGHT;
+	    // The y position of the top-left corner of the rectangle
+	    Double yPosition = (HEIGHT - height);
+
+	    Rectangle r = new Rectangle(width, height);
+	    r.setTranslateX(xPosition);
+	    r.setTranslateY(yPosition);
+	    r.setFill(Color.WHITE);
+	    /*
+	     * Each rectangles is inserted in the dictionary with the index of the value
+	     * it represents, so that a value and a rectangle are uniquely linked
+	     */
+	    rectangles[i]= r;
+	    // The position is always increased by the width of the rectangles
+	    xPosition += width;
+	}
+	
+    }
     /**
      * Given the indexes of two Rectangles and the dictionary that contains them, this method colors
      * both red and then white, so that a comparison between values is "highlighted", and returns a SequentialTransition
