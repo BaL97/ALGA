@@ -24,16 +24,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import visualizer.Visualizer;
 
 public class Main extends Application{
 	Stage window;
 	Scene scene;
 	ArrayList<Comparable> input=new ArrayList<Comparable>();
+	static ArrayList<Double> doubleInput=new ArrayList<Double>();
+	static ArrayList<Integer> integerInput=new ArrayList<Integer>();
 	ArrayList<StackPane> array=new ArrayList<StackPane>();
 	GridPane animation=new GridPane();
 	FileReader f;
 	BufferedReader b;
-	boolean mode=true; //true=animation, false=single step
+	boolean mode=true; //true=animation, false=single-step
 	String speed="medium"; //slow, medium, fast
 	String link="https://github.com/BaL97";
 	
@@ -199,6 +202,28 @@ public class Main extends Application{
 		Button play=new Button("",new ImageView(playImg));
 		Button pause=new Button("", new ImageView(pauseImg));
 		
+		play.setOnAction(e->{
+			if(input.size()!=0){
+			{Stage animation=new Stage();
+			if(inputSelector.doubleflag){
+				fillDouble(input);
+				Visualizer.handleDoubleArray(doubleInput);}
+			else{
+				fillInteger(input);
+				Visualizer.handleIntArray(integerInput);}
+			Visualizer.prepareStage(animation);}
+			
+		//if(input.get(0).getClass().equals("Double"))
+			//	Visualizer.handleDoubleArray(input);
+			//else
+				//Visualizer.handleIntArray(input);
+			//Visualizer.prepareStage(animation);
+			}
+			else
+				AlertBox.display("Input Error", "Empty Input");
+			
+		});
+		
 		/*play.setOnAction(e->{ //Animazione per massimo 10 elementi
 			try{mergesort.start(input,array,animation);}catch (Exception q){AlertBox.display("Error", q.getMessage());}
 			});*/
@@ -206,6 +231,21 @@ public class Main extends Application{
 		HBox menu=new HBox();
 		menu.getChildren().addAll(back,stop,play,pause,next);
 		return menu;
+	}
+
+	private void fillInteger(ArrayList<Comparable> input2) {
+		doubleInput.clear();
+		integerInput.clear();
+		for(Comparable v:input2){
+			integerInput.add(Integer.parseInt(v.toString()));}
+	}
+
+	private void fillDouble(ArrayList<Comparable> input2) {
+		doubleInput.clear();
+		integerInput.clear();
+		for(Comparable v:input2){
+			doubleInput.add(Double.parseDouble(v.toString()));
+		}
 	}
 
 	private HBox bottomLeft(){

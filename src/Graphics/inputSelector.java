@@ -21,9 +21,13 @@ import javafx.stage.Stage;
 
 public class inputSelector{
 	
+	public static ChoiceBox<String> type=setTypes();
 	private static ArrayList<Comparable> inputArray=new ArrayList<Comparable>();
+	public static Boolean doubleflag;
 	
 	public static ArrayList<Comparable> display(){
+		inputArray.clear();
+		
 		//File loader
 		FileChooser loader=new FileChooser();
 		loader.setTitle("Select the input file");
@@ -33,7 +37,6 @@ public class inputSelector{
 		window.setTitle("Load Input");
 		
 		ChoiceBox<String> choice=setChoices();
-		ChoiceBox<String> type=setTypes();
 
 		//Layouts
 		GridPane selection=new GridPane();
@@ -55,14 +58,13 @@ public class inputSelector{
 		//BUTTONS
 		Button ok=new Button("Ok");
 		ok.setOnAction(e->{
-			if(inputArray.isEmpty())
+			if((inputArray.isEmpty()))
 				AlertBox.display("Input Error!", "The input is empty, please insert some data");
 			else
 				window.close();
 		});
 		Button cancel=new Button("Cancel");
 		cancel.setOnAction(e->{
-			inputArray.clear();
 			window.close();
 		});			
 		Button clear=new Button("Clear");
@@ -81,13 +83,18 @@ public class inputSelector{
 			else if(type.getValue().equals("Select Input type..."))
 				AlertBox.display("Input Error!", "Please select a type");
 			else{
-				random(Integer.parseInt(n.getText()),type.getValue());
-				for(int i=0;i<Integer.parseInt(n.getText());i++)
-					input.appendText(inputArray.get(i).toString()+"\n");}}catch (Exception d) {AlertBox.display("Input Error!", "Wrong input for n");}
+				if(doubleflag)
+					doubleRandom(Integer.parseInt(n.getText()));
+				else
+					integerRandom(Integer.parseInt(n.getText()));
+				
+				for(int i=0;i<Integer.parseInt(n.getText());i++){
+					input.appendText(inputArray.get(i).toString()+"\n");}
+				}}catch (Exception d) {AlertBox.display("Input Error!", "Wrong input for n");}
 		});
 		Button add=new Button("Add >>");
 		add.setOnAction(e->{
-			if(manual(type.getValue(),data.getText())&&(choice.getValue().equals("Manual Insert"))&&!(type.getValue().equals("Select Input type..."))&&!(data.getText().equals("data")))
+			if(manual(data.getText()))
 				input.appendText(data.getText()+"\n");
 			else
 				AlertBox.display("Input Error!", "Please check your input");
@@ -127,6 +134,13 @@ public class inputSelector{
 				}
 		});		
 		
+		type.setOnAction(e->{
+			if(type.getValue().equals("Double"))
+				doubleflag=true;
+			else if(type.getValue().equals("Integer"))
+				doubleflag=false;
+		});
+		
 		//setting layouts
 		buttons.setConstraints(ok,1, 1);
 		buttons.setConstraints(cancel, 2, 1);
@@ -160,7 +174,6 @@ public class inputSelector{
 	private static ChoiceBox<String> setTypes() {
 		ChoiceBox<String> type=new ChoiceBox<String>();
 		type.getItems().add("Integer");
-		type.getItems().add("String");
 		type.getItems().add("Double");
 		type.getItems().add("Select Input type...");
 		type.setValue("Select Input type...");
@@ -177,58 +190,48 @@ public class inputSelector{
 		return choice;
 	}
 
-	private static boolean manual(String type, String value) {
-		Comparable v=value;
-		try {
-			if(type.equals("Integer"))
-				v=Integer.parseInt(value); //catch exceptions
-			else if(type.equals("Double"))
-				v=Double.parseDouble(value); //catch exceptions
-		} catch (Exception e) {return false;}
+	private static boolean manual(String value) {
+		Double v;
+		Integer k;
 		
-		if((inputArray.isEmpty())){
+		if(doubleflag){
+			try {
+				v=Double.parseDouble(value); //catch exceptions
+			} catch (Exception e) {return false;}
+			
 			inputArray.add(v);
 			return true;}
-		else if ((inputArray.get(0).getClass().getName().equals(v.getClass().getName()))){
-			inputArray.add(v);
-			return true;}
-		return false;
+		
+		else{
+			try {
+				k=Integer.parseInt(value);
+			} catch (Exception e) {return false;}
+			inputArray.add(k);
+			return true;
+		}	
 	}
 
-	private static void random(Integer n, String type) {
+	private static void integerRandom(Integer n) {
 		inputArray.clear();
 		Random random=new Random();
-		Comparable k;
+		Integer k;
 		
-		if(type.equals("Integer")){
 		for (int i=0;i<n;i++){
 			k=random.nextInt(1000);
-			inputArray.add(k);}}
-		else if(type.equals("Double")){
+			inputArray.add(k);}
+	}
+	
+	private static void doubleRandom(Integer n){
+		inputArray.clear();
+		Double k;
+		Random random=new Random();
 			for (int i=0;i<n;i++){
 				k=random.nextDouble()*1000;
 				inputArray.add(k);}
 		}
-		else {
-			for (int i=0;i<n;i++){
-				k=randomString(10);
-				inputArray.add(k);}}
-	}
-	
-	private static String randomString(int length){
-		Random rand = new Random();
-		StringBuffer tempStr = new StringBuffer();
-		tempStr.append("");
-		for (int i = 0; i < length; i++) {
-		int c = rand.nextInt(122 - 48) + 48;
-		if((c >= 58 && c <= 64) || (c >= 91 && c <= 96)){
-			i--;
-			continue;}
-		tempStr.append((char)c);}
-		return tempStr.toString();
-		}
 	
 	private static boolean fileOpen(File n){
+		if(n.exists())
 		inputArray.clear();
 		boolean flag=false;
 		try{
@@ -238,11 +241,15 @@ public class inputSelector{
 			b=new BufferedReader(f);
 			String s,t;
 			t=b.readLine();
-			if((t.equals("Double"))||(t.equals("Integer"))||(t.equals("String"))){
+			if((t.equals("Double"))||(t.equals("Integer"))){ 
+				if(t.equals("Double"))
+					doubleflag=true;
+				else
+					doubleflag=false;
 				flag=true;
 				s=b.readLine();
 				while (s != null){
-					if(!manual(t,s))
+					if(!manual(s))
 						flag=false;
 					s = b.readLine();
 				}
