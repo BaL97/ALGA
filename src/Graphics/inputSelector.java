@@ -1,10 +1,10 @@
 package Graphics;
-import visualizer.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -94,10 +94,15 @@ public class inputSelector{
 		});
 		Button add=new Button("Add >>");
 		add.setOnAction(e->{
-			if(manual(data.getText()))
-				input.appendText(data.getText()+"\n");
+		    StringTokenizer tokenizer = new StringTokenizer(data.getText());
+		    while(tokenizer.hasMoreTokens())
+		    {
+			String datum = tokenizer.nextToken();
+			if(manual(datum))
+				input.appendText(datum +"\n");
 			else
 				AlertBox.display("Input Error!", "Please check your input");
+		    }
 		});
 				
 		//Choices actions
@@ -239,19 +244,18 @@ public class inputSelector{
 			f=new FileReader(n);
 			BufferedReader b;
 			b=new BufferedReader(f);
-			String s,t;
-			t=b.readLine();
+			String t;
+			StringTokenizer tokenizer = new StringTokenizer(b.readLine());
+			t = tokenizer.nextToken();
 			if((t.equals("Double"))||(t.equals("Integer"))){ 
 				if(t.equals("Double"))
 					doubleflag=true;
 				else
 					doubleflag=false;
 				flag=true;
-				s=b.readLine();
-				while (s != null){
-					if(!manual(s))
+				while (tokenizer.hasMoreTokens()){
+					if(!manual(tokenizer.nextToken()))
 						flag=false;
-					s = b.readLine();
 				}
 			}
 			b.close();} catch (Exception e) {return false;}
