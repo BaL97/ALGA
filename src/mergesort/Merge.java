@@ -1,7 +1,5 @@
 package mergesort;
 
-import java.util.HashMap;
-
 import javafx.scene.shape.Rectangle;
 import visualizer.Visualizer;
 
@@ -16,9 +14,9 @@ import visualizer.Visualizer;
  * 	<p>- merge, which takes an array and three parameters which specify the parts of the
  * 	  array to merge (these parts need to be sorted);</p>
  * 
- * There are two version of the above methods: one which takes an array of IndexedEntry
+ * There are two version of the above methods: one which takes an array of Rectangles
  * and one which takes an array of a generic type T which extends Comparable&ltT&gt
- * The first is tweaked to let the changing of the array be animated, the latter simply sorts
+ * The first is tweaked to let the changes in the array be animated, the latter simply sorts
  * the supplied array
  * 
  * 
@@ -27,14 +25,14 @@ import visualizer.Visualizer;
  */
 public class Merge
 {
-    static Rectangle[] C;
+    // Side array for the merge part
+    private static Rectangle[] C;
 
     /**
      * This method takes an array of a Comparable type T and sorts it.</br>
      * It calls another mergesort method which takes both the array and
      * the range over which the array must be sorted. It's convenient in that it requires
      * just the array to be sorted as a parameter, unlike the other mergesort method
-     * @param <T>
      * @param <T> The type of the array elements; must extend the Comparable interface
      * @param A An array of type T
      */
@@ -129,54 +127,32 @@ public class Merge
     /**
      * Same as {@link mergesort.Merge#mergesort(Comparable[])} in functionality. </br>
      * It differs from it in that there are some modifications necessary to animate the mergesort algorithm.
-     * @param A The array of IndexedEntry to be sorted. The parameter passed to IndexedEntry must be 
-     * Comparable for the method to work, but it's needed that they are numeric with a total 
-     * order relation to be animated (This requirement by the way must be already satisfied during the 
-     * generation of the Rectangles in the Visualizer Class)
-     * @param rectangles A dictionary which holds the generated Rectangles in the class Visualizer from the generation
-     * of the array to be sorted (NOTE: could be a global variable, not sure about it yet)
-     * @return a SequentialTransition which holds the transitions for the movement of the rectangles during the sorting process,
-     * in the order they occurred
+     * @param A The array of Rectangles to be sorted. 
      */
     public static void mergesort(Rectangle[] rectangles) 
     {
-	/* Any modifications to the Nodes added to the scene reflects on the scene
-	 * In order to "register" the changes in the rectangles without directly changing their position
-	 * a copy of the dictionary is made and passed as a parameter along with the others
-	 */
-	//Rectangle[] copy = new Rectangle[rectangles.length];
-	//debug.printMaps(rectangles, copy);
 
 	if (rectangles.length > 1)
 	{
+	    // The side array is initialized with the size of the array
 	    C = new Rectangle[rectangles.length];
 	    Integer first = 0;
 	    Integer last = rectangles.length - 1;
-	    /*
-	     * Each part of the sorting process generates a SequentialTransition
-	     * The result, which is returned, is a combination of the parts
-	     */
 	    mergesort(rectangles,first, last);
 	}
     }
 
 
     /**
-     * Same as {@link mergesort.Merge#mergesort(Comparable[], Integer, Integer)} in functionality, 
-     * differs from it for the same reason {@link mergesort.Merge#mergesort(IndexedEntry[], HashMap)} 
-     * differs from {@link mergesort.Merge#mergesort(Comparable[])} (see {@link mergesort.Merge#mergesort(IndexedEntry[], HashMap)}
+     * Same as {@link Merge#mergesort(Comparable[], Integer, Integer)} in functionality, 
+     * differs from it for the same reason {@link Merge#mergesort(Rectangle[])} 
+     * differs from {@link mergesort.Merge#mergesort(Comparable[])} (see {@link mergesort.Merge#mergesort(Rectangle[])}
      * for details)
-     * @param A	The array of IndexedEntry to be sorted
+     * @param A	The array of Rectangles to be sorted
      * @param first The first end of the range the array must be sorted on
      * @param last The last end of the range the array must be sorted on
-     * @param rectangles A dictionary containing the Rectangles which are node of the scene in the animation
-     * @param copy A copy-dictionary of the above parameter used for modifications that affect the logic of the animation,
-     * but not the animation itself (at least not directly)
-     * @return A SequentialTransition which contains the parts of the animation, which are generated and collected in the 
-     * {@link mergesort.Merge#merge(IndexedEntry[], Integer, Integer, Integer, HashMap, HashMap)} method 
-     * (could return null if no sequences are collected)
      */
-    public static <T extends Comparable<T>> void mergesort(Rectangle[] A, Integer first, Integer last) 
+    public static void mergesort(Rectangle[] A, Integer first, Integer last) 
     {
 	if (first < last)
 	{
@@ -188,25 +164,20 @@ public class Merge
     }
 
     /**
-     * Same as {@link Merge#merge(Comparable[], Integer, Integer, Integer)} in functionality; differs from it in that it generates Transition Objects
-     * and collects them in a SequentialTransition which is ultimately returned; an animation is generated to represent the comparison of two values,
+     * Same as {@link Merge#merge(Comparable[], Integer, Integer, Integer)} in functionality; differs from it in that it generates the animations
+     * calling methods of the Visualizer class; an animation is generated to represent the comparison of two values,
      * another is generated to show the movement of the Rectangles from their position to the one they occupy in the sorted array (or in the sorted part
      * of it)
      * 
-     * @param A The array of IndexedEntry to be sorted
+     * @param A The array of Rectangles to be sorted
      * @param first The first index for the first part of the split
      * @param mid The mid index, which is the end of the first part of the array; mid + 1 is the index for the beginning of the second part of the array
      * @param last The last index, which defines the end of the second part
-     * @param rectangles The dictionary of Rectangles which are nodes of the Scene
-     * @param copy The copy dictionary needed for modifications in the logic of the animation
-     * @return a SequentialTransition which gathers the animations from the comparison and the animations from the "update" of the state of the part
-     * of the array after the merge
      */
-    private static <T extends Comparable<T>> void merge(Rectangle[] A, Integer first, Integer mid, Integer last) 
+    private static void merge(Rectangle[] A, Integer first, Integer mid, Integer last) 
     {
 	// For notes of the merge part of this method, see merge, at line 77
 	Integer i, j, k, h;
-	Double leftmost = A[first].getTranslateX();
 	i = first;
 	j = mid + 1;
 	k = first;
@@ -243,9 +214,8 @@ public class Merge
 	/* After the merge is over, the position of the Rectangles is changed
 	 * In order to show that, an animation showing the "update" of the part of the
 	 * Array where the merge occurred is generated by the Visualizer.updatePosition method
-	 * and added to the SequentialTransition to be returned
 	 */
-	Visualizer.updatePosition(A,first,last,leftmost);
+	Visualizer.updatePosition(A,first,last);
     }
 
     /**

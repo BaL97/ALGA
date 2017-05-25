@@ -1,7 +1,6 @@
 package visualizer;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;
@@ -23,11 +22,12 @@ import mergesort.Merge;
  */
 public class Visualizer extends Application
 {
-    public static SequentialTransition sequence; 
-    public static Group root;
-    public static Double doubleArray[];
-    public static Integer integerArray[];
-    public static Boolean doubleFlag;
+    private static SequentialTransition sequence; 
+    private static Group root;
+    private static Double doubleArray[];
+    private static Integer integerArray[];
+    private static Boolean doubleFlag;
+
     @Override
     public void start(Stage primaryStage) 
     {
@@ -36,25 +36,20 @@ public class Visualizer extends Application
     
     /**
      * Prepares the stage and handles the animation part
-     * @param stage The stage to be handled, (primaryStage)
+     * @param stage The stage to be handled
      */
     public static void prepareStage(Stage stage)
     {
-	// Keeps all the nodes in the Scene
 	final Integer LENGTH = doubleFlag ? doubleArray.length : integerArray.length;
         final int WIDTH = 1000, HEIGHT = 750;
         root = new Group();
         
-        // Dictionary that keeps all the rectangles in the scene
         Rectangle[] rectangles = new Rectangle[LENGTH];
         Scene s;
         sequence = new SequentialTransition();
         
-        // A is filled with random values
-        if(doubleFlag)
-        	fillRDouble(rectangles, HEIGHT, WIDTH);
-        else
-        	fillRInt(rectangles,HEIGHT,WIDTH);
+        // The rectangles array is filled using the data passed
+        fillR(rectangles, HEIGHT, WIDTH);
 
 	// The rectangles are added to root group
 	root.getChildren().addAll(rectangles);
@@ -63,11 +58,10 @@ public class Visualizer extends Application
 
 	s.setFill(Color.BLACK);
 
-	stage.setTitle("ALGA");
+	stage.setTitle("Mergesort");
 	stage.setScene(s);
 	stage.show();
 
-	// All the Transitions from the mergesort are retrieved and added to sequence
         Merge.mergesort(rectangles);
 
         sequence.play();
@@ -97,26 +91,6 @@ public class Visualizer extends Application
     	doubleFlag = false;
     }
     
-    public static void main(String[] args)
-    {
-	launch(args);
-    }
-    
-    /**
-     * Fills the array A with random values and gives each an index corresponding with
-     * the order of generation
-     * @param A The array of IndexedEntry to be filled
-     */
-    public static void fillArray(Integer[] A)
-    {
-	Random r = new Random();
-
-	for (int i = 0; i < A.length; i++)
-	{
-	   A[i] = r.nextInt(1000);
-	}
-    }
-    
     /**
      * Returns the max value in an array of Comparable items
      * @param <T> The type of the elements of the array; must extend Comparable interface
@@ -137,24 +111,33 @@ public class Visualizer extends Application
     }
     
     /**
-     * Fills a dictionary of Integer-Rectangles with Rectangles corresponding to values in
+     * Fills an array of Rectangles with Rectangles corresponding to the values in
      * an array passed as parameter; The type of the array must be a numeric type with a total order
      * relationship
-     * @param rectangles The dictionary of Integer-Rectangles to be filled
-     * @param integerArray The array of numeric values to represent with rectangles
+     * @param rectangles The array of Rectangles to be filled
      * @param HEIGHT The height of the area in which the values are represented
      * @param WIDTH The width of the area in which the values are represented
      */
-    public static void fillRInt(Rectangle[] rectangles, Integer HEIGHT, Integer WIDTH)
+    public static void fillR(Rectangle[] rectangles, Integer HEIGHT, Integer WIDTH)
     {
 	
-	Double width = ((double) WIDTH)/integerArray.length;
-	int max = ArrayMax(integerArray);
+	int l = doubleFlag ? doubleArray.length : integerArray.length;
+	Double width = ((double) WIDTH)/l;
+	double doubleMax = 0;
+	int intMax = 0;
+	if(doubleFlag)
+	{
+            doubleMax = ArrayMax(doubleArray);
+        }
+	else
+	{
+	    intMax = ArrayMax(integerArray);
+	}
 
 	// the start position is 0
 	Double xPosition = 0.0;
 	
-	for (int i = 0; i < integerArray.length; i++)
+	for (int i = 0; i < l; i++)
 	{
 	    /*
 	     * The height of each rectangle is defined by the ratio between the value
@@ -162,7 +145,11 @@ public class Visualizer extends Application
 	     * so that values are represented with a Rectangle proportional to its 
 	     * magnitude in the array
 	     */
-	    Double height = integerArray[i] / (double)max * HEIGHT;
+	    Double height;
+	    if(doubleFlag)
+		height = doubleArray[i] / doubleMax * HEIGHT;
+	    else
+		height = integerArray[i] / (double) intMax * HEIGHT;
 	    // The y position of the top-left corner of the rectangle
 	    Double yPosition = (HEIGHT - height);
 
@@ -181,51 +168,12 @@ public class Visualizer extends Application
 	
     }
     
-    public static void fillRDouble(Rectangle[] rectangles, Integer HEIGHT, Integer WIDTH)
-    {
-	
-	Double width = ((double) WIDTH)/doubleArray.length;
-	double max = ArrayMax(doubleArray);
-
-	// the start position is 0
-	Double xPosition = 0.0;
-	
-	for (int i = 0; i < doubleArray.length; i++)
-	{
-	    /*
-	     * The height of each rectangle is defined by the ratio between the value
-	     * considered and the max value in the array times the height of the area,
-	     * so that values are represented with a Rectangle proportional to its 
-	     * magnitude in the array
-	     */
-	    Double height = doubleArray[i] / max * HEIGHT;
-	    // The y position of the top-left corner of the rectangle
-	    Double yPosition = (HEIGHT - height);
-
-	    Rectangle r = new Rectangle(width, height);
-	    r.setTranslateX(xPosition);
-	    r.setTranslateY(yPosition);
-	    r.setFill(Color.WHITE);
-	    /*
-	     * Each rectangles is inserted in the dictionary with the index of the value
-	     * it represents, so that a value and a rectangle are uniquely linked
-	     */
-	    rectangles[i]= r;
-	    // The position is always increased by the width of the rectangles
-	    xPosition += width;
-	}
-	
-    }
     /**
-     * Given the indexes of two Rectangles and the dictionary that contains them, this method colors
-     * both red and then white, so that a comparison between values is "highlighted", and returns a SequentialTransition
+     * Given two Rectangles, this method colors
+     * both red and then white, so that a comparison between values is "highlighted", and adds the animation to the main SequentialTransition
      * that holds the animation
-     * @param i The index of the first Rectangle
-     * @param j The index of the second Rectangle
-     * @param rectangles The dictionary of rectangles that contains the rectangles
-     * @return A SequentialTransition with the coloring of the two rectangles, which happen in parallel for
-     * both the Rectangle when they transition from white to red and viceversa, but the two moments are separated
-     * (the first happens before the second)
+     * @param R The first Rectangle
+     * @param P The second Rectangle
      * 
      */
     public static void colorRectangles(Rectangle R,Rectangle P)
@@ -250,15 +198,11 @@ public class Visualizer extends Application
     /**
      * Creates a SequentialTransition which contains the animation of the movement of the rectangles to the position
      * they occupy in the sorted part of the array in a particular moment
-     * @param A The array of values sorted
+     * @param A The array of Rectangles to be sorted
      * @param first The first index of the range over which to "update" the position of the rectangles
      * @param last The second index of the range over which to "update" the position of the rectangles
-     * @param to The dictionary of rectangles that are nodes in the scene
-     * @param from The copy dictionary for the logical changes in the animation
-     * @return A SequentialTransition which contains the movement of the rectangles to their position in the sorted
-     * version of the part of array contained by the first and the last indexes
      */
-    public static <T extends Comparable<T>> void updatePosition(Rectangle[] A,Integer first,Integer last,Double leftmost)
+    public static void updatePosition(Rectangle[] A,Integer first,Integer last)
     {
 	Double xPosition = leftmost(A,first,last);
 	Double dx = A[first].getWidth();
@@ -278,13 +222,11 @@ public class Visualizer extends Application
 
     /**
      * Returns the X position of the leftmost Rectangle in a range
-     * @param A The array of values linked to the rectangles
+     * @param A The array of Rectangles
      * @param first The first index of the range considered
      * @param last The second index of the range considered
-     * @param rectangles The dictionary of rectangles which contains the rectangles linked to the values in A
-     * @return A Double value with the X coordinate of the leftmost Rectangle in the range
      */
-    private static <T extends Comparable<T>> Double leftmost(Rectangle[] R, Integer first, Integer last)
+    private static Double leftmost(Rectangle[] R, Integer first, Integer last)
     {
 	// The first is assumed to be the leftmost
 	Double start = R[first].getTranslateX();
