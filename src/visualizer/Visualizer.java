@@ -2,6 +2,7 @@ package visualizer;
 
 import java.util.ArrayList;
 
+import Graphics.Main;
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.SequentialTransition;
@@ -23,10 +24,11 @@ import mergesort.Merge;
 public class Visualizer extends Application
 {
     private static SequentialTransition sequence; 
-    private static Group root;
     private static Double doubleArray[];
     private static Integer integerArray[];
     private static Boolean doubleFlag;
+    private static Duration swapDelay;
+    private static Duration compDelay;
 
     @Override
     public void start(Stage primaryStage) 
@@ -42,7 +44,7 @@ public class Visualizer extends Application
     {
 	final Integer LENGTH = doubleFlag ? doubleArray.length : integerArray.length;
         final int WIDTH = 1000, HEIGHT = 750;
-        root = new Group();
+        Group root = new Group();
         
         Rectangle[] rectangles = new Rectangle[LENGTH];
         Scene s;
@@ -61,12 +63,19 @@ public class Visualizer extends Application
 	stage.setTitle("Mergesort");
 	stage.setScene(s);
 	stage.show();
-
+	
+	setDelays();
         Merge.mergesort(rectangles);
 
         sequence.play();
     }
     
+    private static void setDelays()
+    {
+	swapDelay = Duration.millis(Main.getSwapDelay());
+	compDelay = Duration.millis(Main.getCompDelay());
+    }
+
     public static void handleDoubleArray(ArrayList<Double> L)
     {
     	doubleArray = new Double[L.size()];
@@ -178,16 +187,20 @@ public class Visualizer extends Application
      */
     public static void colorRectangles(Rectangle R,Rectangle P)
     {
-
-	Duration d = Duration.millis(25);
 	// from white to red for the first rectangle
-	FillTransition f = new FillTransition(d,R,Color.WHITE,Color.RED);
+	Color prevColor1 = (Color) R.getFill();
+	Color prevColor2 = (Color) P.getFill();
+	FillTransition f = new FillTransition(compDelay,R);
+	f.setToValue(Color.RED);
 	// viceversa
-	FillTransition f2 = new FillTransition(d,R,Color.RED,Color.WHITE);
+	FillTransition f2 = new FillTransition(compDelay,R);
+	f2.setToValue(prevColor1);
 	// from white to red for the second rectangle
-	FillTransition f3 = new FillTransition(d,P,Color.WHITE,Color.RED);
+	FillTransition f3 = new FillTransition(compDelay,P);
+	f3.setToValue(Color.RED);
 	// viceversa
-	FillTransition f4 = new FillTransition(d,P,Color.RED,Color.WHITE);
+	FillTransition f4 = new FillTransition(compDelay,P);
+	f4.setToValue(prevColor2);
 	// composition of the white-red transition for both rectangles
 	ParallelTransition p1 = new ParallelTransition(f,f3);
 	// composition of the red-white transition for both rectangles
@@ -210,7 +223,7 @@ public class Visualizer extends Application
 	{
             // Duration is one millisecond so that the animation is almost instantaneous
             // The node to be animated is retrieved from the dictionary of rectangles in the scene
-            TranslateTransition t = new TranslateTransition(Duration.millis(1),A[i]);
+            TranslateTransition t = new TranslateTransition(swapDelay,A[i]);
             // The "to" position is calculated from the starting point with a shift that adds up
             t.setToX(xPosition);
 
