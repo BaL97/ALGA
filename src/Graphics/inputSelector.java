@@ -45,7 +45,7 @@ public class inputSelector{
 		
 		//Texts
 		TextField n=new TextField();
-		n.setPrefWidth(40);
+		n.setPrefWidth(60);
 		TextArea input=new TextArea("Input preview:\n");
 		input.setDisable(false);
 		input.setEditable(false);
