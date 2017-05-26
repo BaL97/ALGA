@@ -25,8 +25,8 @@ public class About {
 		BorderPane layout = new BorderPane();
 		layout.setBottom(button);
 		layout.setCenter(label);
-		layout.setAlignment(button,Pos.CENTER);
-		layout.setAlignment(layout.getCenter(), Pos.CENTER);
+		BorderPane.setAlignment(button,Pos.CENTER);
+		BorderPane.setAlignment(layout.getCenter(), Pos.CENTER);
 		Scene scene=new Scene(layout);
 		window.setScene(scene);
 		window.showAndWait();

@@ -41,8 +41,8 @@ public class ConfirmBox {
 		choice.setPadding(new Insets(10,10,10,10));
 		choice.setVgap(10);
 		choice.setHgap(5);
-		choice.setConstraints(yesButton, 0, 1);
-		choice.setConstraints(noButton, 1, 1);
+		GridPane.setConstraints(yesButton, 0, 1);
+		GridPane.setConstraints(noButton, 1, 1);
 		choice.getChildren().addAll(yesButton,noButton);
 		choice.setAlignment(Pos.CENTER);
 		layout.setCenter(choice);
