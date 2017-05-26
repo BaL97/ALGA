@@ -1,6 +1,5 @@
 package Graphics;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
@@ -12,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -37,7 +37,9 @@ public class Main extends Application{
 	FileReader f;
 	BufferedReader b;
 	boolean mode=true; //true=animation, false=single-step
-	String speed="medium"; //slow, medium, fast
+	static Double swapDelay;
+	static Double compDelay;
+	static String speed="medium"; //slow, medium, fast
 	String link="https://github.com/BaL97";
 	
 	public static void main (String args[]){
@@ -57,33 +59,11 @@ public class Main extends Application{
 
 		//Left
 		TextArea inputtext=new TextArea();
-		inputtext.setEditable(false);
-		inputtext.setText("Data:\n");
-		inputtext.setPrefSize(300, 300);
-		inputtext.setMaxHeight(300);
+		setupLeft(inputtext);
 		
 		//Center
 		GridPane center=new GridPane();
-		center.setPadding(new Insets(0,0,0,0));
-		Text stat=new Text();
-		stat.setText("Statistics\n\nNumber of confrontation:      ");
-		Text stat2=new Text();
-		stat2.setText("\n\nNumber of exchanges:      ");
-		Text stat3=new Text();
-		stat3.setText("\n\nExecution time:      ");
-		StackPane p1=new StackPane();
-		p1.setPadding(new Insets(0,20,20,100));
-		p1.getChildren().add(stat);
-		StackPane p2=new StackPane();
-		p2.setPadding(new Insets(0,20,20,20));
-		p2.getChildren().add(stat2);
-		StackPane p3=new StackPane();
-		p3.setPadding(new Insets(0,20,20,20));
-		p3.getChildren().add(stat3);
-		center.setConstraints(p1, 0, 0);
-		center.setConstraints(p2, 1, 0);
-		center.setConstraints(p3, 2, 0);
-		center.getChildren().addAll(p1,p2,p3);
+		setupCenter(center);
 		
 		//Right
 		Image algorithms=new Image("img/algorithms.png");
@@ -91,33 +71,8 @@ public class Main extends Application{
 		
 		
 		//Bottom
-		Rectangle divisor=new Rectangle();
-		divisor.setWidth(1500);
-		divisor.setHeight(2);
-		divisor.setFill(Color.DARKGRAY);
-		Rectangle divisor2=new Rectangle();
-		divisor2.setWidth(2);
-		divisor2.setHeight(400);
-		divisor2.setFill(Color.DARKGREY);
-		HBox div=new HBox();
-		div.getChildren().add(divisor2);
-		div.setPadding(new Insets(50,0,0,50));
 		BorderPane bottom=new BorderPane();
-		bottom.setTop(divisor);
-		HBox left=bottomLeft();
-		bottom.setLeft(left);
-		bottom.setCenter(div);
-		Text credits=new Text();
-		credits.setText("\n\nWritten by: Andrea Berlingieri & Davide Balestra");
-		bottom.setBottom(credits);
-		VBox bottomright=new VBox();
-		bottomright.setPadding(new Insets(50,110,0,0));
-		Label lab=new Label("Merge Sort Sample\n");
-		lab.setPadding(new Insets(0,20,20,20));
-		Image sample=new Image("img/sample.png");
-		ImageView sampleimg=new ImageView(sample);
-		bottomright.getChildren().addAll(lab,sampleimg);
-		bottom.setRight(bottomright);
+		setupBottom(bottom);
 		
 		//Top
 		BorderPane topMenu=new BorderPane();
@@ -139,46 +94,112 @@ public class Main extends Application{
 		layout.setRight(image);
 		layout.setBottom(bottom);
 		
+		ScrollPane s = new ScrollPane(layout);
+		
 		//Scene
-		scene=new Scene(layout,1500,800);
+		scene=new Scene(s,1500,800);
 		window.setScene(scene);
 		window.show();
 		
 	}
 	
+	private void setupBottom(BorderPane bottom)
+	{
+	    // TODO Auto-generated method stub
+		Rectangle divisor=new Rectangle();
+		divisor.setWidth(1500);
+		divisor.setHeight(2);
+		divisor.setFill(Color.DARKGRAY);
+		Rectangle divisor2=new Rectangle();
+		divisor2.setWidth(2);
+		divisor2.setHeight(400);
+		divisor2.setFill(Color.DARKGREY);
+		HBox div=new HBox();
+		div.getChildren().add(divisor2);
+		div.setPadding(new Insets(50,0,0,50));
+		bottom.setTop(divisor);
+		HBox left=bottomLeft();
+		bottom.setLeft(left);
+		bottom.setCenter(div);
+		Text credits=new Text();
+		credits.setText("\n\nWritten by: Andrea Berlingieri & Davide Balestra");
+		bottom.setBottom(credits);
+		VBox bottomright=new VBox();
+		bottomright.setPadding(new Insets(50,110,0,0));
+		Label lab=new Label("Merge Sort Sample\n");
+		lab.setPadding(new Insets(0,20,20,20));
+		Image sample=new Image("img/sample.png");
+		ImageView sampleimg=new ImageView(sample);
+		bottomright.getChildren().addAll(lab,sampleimg);
+		bottom.setRight(bottomright);
+	    
+	}
+
+	private void setupLeft(TextArea inputtext)
+	{
+		inputtext.setEditable(false);
+		inputtext.setText("Data:\n");
+		inputtext.setPrefSize(300, 300);
+		inputtext.setMaxHeight(300);
+	}
+
+	private void setupCenter(GridPane center)
+	{
+		center.setPadding(new Insets(0,0,0,0));
+		Text stat=new Text();
+		stat.setText("Stats\n\nNumber of comparisons:      ");
+		Text stat2=new Text();
+		stat2.setText("\n\nNumber of array accesses:      ");
+		Text stat3=new Text();
+		stat3.setText("\n\nExecution time:      ");
+		StackPane p1=new StackPane();
+		p1.setPadding(new Insets(0,20,20,100));
+		p1.getChildren().add(stat);
+		StackPane p2=new StackPane();
+		p2.setPadding(new Insets(0,20,20,20));
+		p2.getChildren().add(stat2);
+		StackPane p3=new StackPane();
+		p3.setPadding(new Insets(0,20,20,20));
+		p3.getChildren().add(stat3);
+		GridPane.setConstraints(p1, 0, 0);
+		GridPane.setConstraints(p2, 1, 0);
+		GridPane.setConstraints(p3, 2, 0);
+		center.getChildren().addAll(p1,p2,p3);
+	}
+
 	public MenuBar setMenuBar(TextArea inputtext){
 			//File Menù
-				Menu file=new Menu("File");
-				MenuItem load = new MenuItem("Load Input...");
-				file.getItems().add(load); //load input
-				MenuItem settings=new MenuItem("Settings...");
-				file.getItems().add(settings);
-				MenuItem exit=new MenuItem("Exit");
-				file.getItems().add(exit); //exit the program
-				load.setOnAction(e->{
-					inputtext.clear();
-					inputtext.setText("Data:\n\n");
-					input=inputSelector.display();
-					for(int i=0;i<input.size();i++){
-						inputtext.appendText(input.get(i)+"\n");				
-					}
-					inputtext.appendText("\n\nInput Dimension: "+input.size());
-				});
-				settings.setOnAction(e->Settings.display(this));
-				exit.setOnAction(e->closeProgram());
-				
-				//Help Menù
-				Menu help=new Menu("Help");
-				MenuItem about = new MenuItem("About...");
-				help.getItems().add(about); //load input
-				MenuItem git=new MenuItem("Git...");
-				help.getItems().add(git);
-				about.setOnAction(e->About.display());
-				git.setOnAction(e->webPage.display(link, "GitHub"));
-				 
-				//main Menù Bar
-				MenuBar menu=new MenuBar();	
-				menu.getMenus().addAll(file,help);
+                Menu file=new Menu("File");
+                MenuItem load = new MenuItem("Load Input...");
+                file.getItems().add(load); //load input
+                MenuItem settings=new MenuItem("Settings...");
+                file.getItems().add(settings);
+                MenuItem exit=new MenuItem("Exit");
+                file.getItems().add(exit); //exit the program
+                load.setOnAction(e->{
+                        inputtext.clear();
+                        inputtext.setText("Data:\n\n");
+                        input=inputSelector.display();
+                        for(int i=0;i<input.size();i++){
+                                inputtext.appendText(input.get(i)+"\n");				
+                        }
+                        inputtext.appendText("\n\nInput Dimension: "+input.size());
+                });
+                settings.setOnAction(e->Settings.display(this));
+                exit.setOnAction(e->closeProgram());
+                
+                //Help Menù
+                Menu help=new Menu("Help");
+                MenuItem about = new MenuItem("About...");
+                help.getItems().add(about); //load input
+                MenuItem git=new MenuItem("Git...");
+                help.getItems().add(git);
+                about.setOnAction(e->About.display());
+                git.setOnAction(e->webPage.display(link, "GitHub"));
+                 
+                //main Menù Bar
+                MenuBar menu=new MenuBar();	
+                menu.getMenus().addAll(file,help);
 		return menu;
 	}
 		
@@ -284,6 +305,27 @@ public class Main extends Application{
 	}
 	
 	public void setSpeed(String speed){
-		this.speed=speed;
+		Main.speed=speed;
 	}
+
+	public static Double getSwapDelay()
+	{
+	    return swapDelay;
+	}
+
+	public static void setSwapDelay(Double swapDelay)
+	{
+	    Main.swapDelay = swapDelay;
+	}
+
+	public static Double getCompDelay()
+	{
+	    return compDelay;
+	}
+
+	public static void setCompDelay(Double compDelay)
+	{
+	    Main.compDelay = compDelay;
+	}
+
 }
