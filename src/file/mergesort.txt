@@ -3,25 +3,20 @@ MERGE SORT
 
 Description of algorithm
 
-Algorithm based on Divide-et-impera technique.
-It consists on divide recursively the array in 
-two segments and call the recursive function on
-each segment.
-After the recursive call, the mergesort procedure
-call a merge function that merges the two segment
-of the array in one sorted array.
-
+Merge Sort is a Divide-and-conquer sorting algorithm
+It basically divides the array to be sorted into two
+parts, sorts them and then merges them into a sorted
+array. To sort the two parts, Merge Sort calls itself
+recursively on the two parts. An array (or a part of
+an array) of length 1 is considered ordered.
 
 Pseudocode
 
-function mergesort (a[], left, right)
+function mergesort (A[], left, right)
     if left < right then
         center ← (left + right) / 2
-        mergesort(a, left, center)
-        mergesort(a, center+1, right)
-        merge(a, left, center, right)
+        mergesort(A, left, center)
+        mergesort(A, center + 1, right)
+        merge(A, left, center, right)
 
-
-Statistics
-
-Complexity: O(n logn)
+Complexity: ϴ(n logn)
