@@ -6,12 +6,15 @@ import Graphics.Main;
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.SequentialTransition;
+import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import mergesort.Merge;
@@ -57,7 +60,11 @@ public class Visualizer extends Application
 	root.getChildren().addAll(rectangles);
 
 	s = new Scene(root, WIDTH, HEIGHT);
+	
+	HBox stats = new HBox();
+	setUpStats(stats);
 
+	root.getChildren().add(stats);
 	s.setFill(Color.BLACK);
 
 	stage.setTitle("Mergesort");
@@ -66,10 +73,38 @@ public class Visualizer extends Application
 	
 	setDelays();
         Merge.mergesort(rectangles);
-
         sequence.play();
+        stage.setOnCloseRequest(e->{
+            Main.clearStats();
+        });
     }
     
+    private static void setUpStats(HBox stats)
+    {
+	stats.setLayoutX(0);
+	stats.setLayoutY(0);
+	stats.setSpacing(20);
+	
+	HBox comps = new HBox();
+	Text comparisons = new Text("Comparisons: ");
+	comparisons.setFill(Color.WHITE);
+	Text C = new Text();
+	C.setFill(Color.WHITE);
+	C.textProperty().bind(Main.comps.textProperty());
+	comps.getChildren().addAll(comparisons,C);
+	
+	HBox accs = new HBox();
+	Text accesses = new Text("Array accesses: ");
+	accesses.setFill(Color.WHITE);
+	Text A = new Text();
+	A.setFill(Color.WHITE);
+	A.textProperty().bind(Main.accs.textProperty());
+	accs.getChildren().addAll(accesses,A);
+	
+	stats.getChildren().addAll(comps,accs);
+	
+    }
+
     private static void setDelays()
     {
 	swapDelay = Duration.millis(Main.getSwapDelay());
@@ -201,11 +236,18 @@ public class Visualizer extends Application
 	// viceversa
 	FillTransition f4 = new FillTransition(compDelay,P);
 	f4.setToValue(prevColor2);
-	// composition of the white-red transition for both rectangles
 	ParallelTransition p1 = new ParallelTransition(f,f3);
-	// composition of the red-white transition for both rectangles
 	ParallelTransition p2 = new ParallelTransition(f2,f4);
-	sequence.getChildren().addAll(p1,p2);
+	// composition of the red-white transition for both rectangles
+	SequentialTransition s = new SequentialTransition(p1,p2);
+	s.setOnFinished(e->{
+	    Main.updateComps();
+	    Main.updateAccesses();
+	    Main.updateAccesses();
+	    if(Main.getMode() == false)
+		sequence.pause();
+	});
+	sequence.getChildren().add(s);
     }
 
     /**
@@ -226,6 +268,11 @@ public class Visualizer extends Application
             TranslateTransition t = new TranslateTransition(swapDelay,A[i]);
             // The "to" position is calculated from the starting point with a shift that adds up
             t.setToX(xPosition);
+            
+            t.setOnFinished(e->{
+        	if(Main.getMode() == false)
+        	    sequence.pause();
+            });
 
             sequence.getChildren().add(t);
 
@@ -250,6 +297,31 @@ public class Visualizer extends Application
 		start = R[i].getTranslateX();
 	}
 	return start;
+    }
+
+    public static void accessesUpdate()
+    {
+	
+	Transition t = new Transition()
+	{
+	    
+	    @Override
+	    protected void interpolate(double frac)
+	    {
+		
+	    }
+	};
+	t.setDelay(Duration.ONE);
+	t.setOnFinished(e->{
+	    Main.updateAccesses();
+	});
+	sequence.getChildren().add(t);
+	
+    }
+
+    public static void play()
+    {
+	sequence.play();
     }
 
 }

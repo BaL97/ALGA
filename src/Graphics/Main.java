@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -32,14 +33,15 @@ public class Main extends Application{
 	ArrayList<Comparable> input=new ArrayList<Comparable>();
 	static ArrayList<Double> doubleInput=new ArrayList<Double>();
 	static ArrayList<Integer> integerInput=new ArrayList<Integer>();
-	ArrayList<StackPane> array=new ArrayList<StackPane>();
 	GridPane animation=new GridPane();
 	FileReader f;
 	BufferedReader b;
-	boolean mode=true; //true=animation, false=single-step
+	static Boolean mode=true; //true=animation, false=single-step
 	static Double swapDelay;
 	static Double compDelay;
 	static String speed="medium"; //slow, medium, fast
+	public static Label comps = new Label("0");
+	public static Label accs = new Label("0");
 	String link="https://github.com/BaL97";
 	
 	public static void main (String args[]){
@@ -232,7 +234,15 @@ public class Main extends Application{
 			else{
 				fillInteger(input);
 				Visualizer.handleIntArray(integerInput);}
-			Visualizer.prepareStage(animation);}
+			if (Main.getCompDelay() == null && Main.getSwapDelay() == null)
+			    AlertBox.display("Error, delay not set", "Please set the delay for the comparison animation and for the rectangle movemnt animation in the settings menu");
+			else if(Main.getCompDelay() == null)
+			    AlertBox.display("Error, delay not set", "Please set the delay for the comparison animation in the settings menu");
+			else if(Main.getSwapDelay() == null)
+			    AlertBox.display("Error, delay not set", "Please set the delay for the rectangle movement animation in the settings menu");
+			else
+                            Visualizer.prepareStage(animation);
+			}
 			
 		//if(input.get(0).getClass().equals("Double"))
 			//	Visualizer.handleDoubleArray(input);
@@ -243,6 +253,10 @@ public class Main extends Application{
 			else
 				AlertBox.display("Input Error", "Empty Input");
 			
+		});
+		
+		next.setOnAction(e->{
+		    Visualizer.play();
 		});
 		
 		/*play.setOnAction(e->{ //Animazione per massimo 10 elementi
@@ -326,6 +340,32 @@ public class Main extends Application{
 	public static void setCompDelay(Double compDelay)
 	{
 	    Main.compDelay = compDelay;
+	}
+
+	public static void updateComps()
+	{
+	   Integer c = Integer.parseInt(comps.getText());
+	   c++;
+	   comps.setText(c.toString()); 
+	}
+
+	public static void updateAccesses()
+	{
+	   Integer a = Integer.parseInt(accs.getText());
+	   a++;
+	   accs.setText(a.toString()); 
+	    
+	}
+
+	public static void clearStats()
+	{
+	   comps.setText("0"); 
+	   accs.setText("0"); 
+	}
+
+	public static Boolean getMode()
+	{
+	    return mode;
 	}
 
 }

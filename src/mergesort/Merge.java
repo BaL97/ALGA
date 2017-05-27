@@ -204,12 +204,15 @@ public class Merge
 	for(h = mid; h >= i; h--)
 	{
 	    A[j] = A[h];
+	    Visualizer.accessesUpdate();
+	    Visualizer.accessesUpdate();
 	    j--;
 	}
 	
 	for(i = first; i < k; i++)
 	{
 	    A[i] = C[i];
+	    Visualizer.accessesUpdate();
 	}
 	/* After the merge is over, the position of the Rectangles is changed
 	 * In order to show that, an animation showing the "update" of the part of the
