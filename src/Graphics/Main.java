@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -208,7 +209,7 @@ public class Main extends Application{
 	private void closeProgram(){
 		boolean x=ConfirmBox.display("Exit", "Are you sure?");
 		if(x)
-			window.close();
+			System.exit(0);
 	}
 	
 	public HBox setFlowControl(){
