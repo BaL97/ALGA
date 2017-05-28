@@ -43,7 +43,7 @@ public class Main extends Application{
 	static String speed="medium"; //slow, medium, fast
 	public static Label comps = new Label("0");
 	public static Label accs = new Label("0");
-	String link="https://github.com/BaL97";
+	public static String link="https://github.com/andrea-berling/ALGA";
 	
 	public static void main (String args[]){
 		launch(args);

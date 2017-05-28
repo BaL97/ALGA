@@ -27,7 +27,8 @@ public class inputSelector{
 	
 	public static ArrayList<Comparable> display(){
 		inputArray.clear();
-		
+		Main.doubleInput.clear();
+		Main.integerInput.clear();
 		//File loader
 		FileChooser loader=new FileChooser();
 		loader.setTitle("Select the input file");
@@ -65,6 +66,7 @@ public class inputSelector{
 		});
 		Button cancel=new Button("Cancel");
 		cancel.setOnAction(e->{
+			inputArray.clear();
 			window.close();
 		});			
 		Button clear=new Button("Clear");
@@ -75,13 +77,17 @@ public class inputSelector{
 		});
 		Button gen=new Button("Generate >>");
 		gen.setOnAction(e->{
+			inputArray.clear();
 			input.clear();
 			input.appendText("Input preview:\n");
+			
 			try{
 			if(n.getText().equals(""))
 				AlertBox.display("Input Error!", "Please insert n");
 			else if(type.getValue().equals("Select Input type..."))
 				AlertBox.display("Input Error!", "Please select a type");
+			else if(choice.getValue().equals("Select Input source..."))
+				AlertBox.display("Input Error!", "Please select an input method");
 			else{
 				if(doubleflag)
 					doubleRandom(Integer.parseInt(n.getText()));
@@ -119,8 +125,7 @@ public class inputSelector{
 					input.clear();
 					input.appendText("Input preview:\n");
 					for(int i=0;i<inputArray.size();i++)
-						input.appendText(inputArray.get(i).toString()+"\n");
-					input.appendText("\nN = "+inputArray.size());}
+						input.appendText(inputArray.get(i).toString()+"\n");}
 				else
 					AlertBox.display("Input file error!","Please check your input file and try again");}
 				break;
@@ -200,20 +205,24 @@ public class inputSelector{
 		Integer k;
 		
 		if(doubleflag){
+			if((inputArray.isEmpty())||(inputArray.get(0).getClass().toString().equals("class java.lang.Double"))){
 			try {
 				v=Double.parseDouble(value); //catch exceptions
 			} catch (Exception e) {return false;}
 			
 			inputArray.add(v);
 			return true;}
+			return false;}
 		
 		else{
+			if((inputArray.isEmpty())||(inputArray.get(0).getClass().toString().equals("class java.lang.Integer"))){
 			try {
 				k=Integer.parseInt(value);
 			} catch (Exception e) {return false;}
 			inputArray.add(k);
 			return true;
-		}	
+		}
+		return false;}
 	}
 
 	private static void integerRandom(Integer n) {
