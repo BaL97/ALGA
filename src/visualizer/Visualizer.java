@@ -359,7 +359,10 @@ public class Visualizer extends Application
     private static void reset()
     {
 	for(int i = 0; i < rectangles.length; i++)
+	{
 	    rectangles[i].setTranslateX(copy.get(rectangles[i]));
+            rectangles[i].setFill(Color.WHITE);
+	}
 	
     }
 }
