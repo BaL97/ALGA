@@ -179,14 +179,10 @@ public class Main extends Application{
 	public HBox setFlowControl(){
 		
 		Image nextImg=new Image("img/next.png");		
-		Image backImg=new Image("img/back.png");
-		Image stopImg=new Image("img/stop.png");
 		Image pauseImg=new Image("img/pause.png");
 		Image playImg=new Image("img/play.png");
 		
-		Button back=new Button("",new ImageView(backImg));
 		Button next=new Button("",new ImageView(nextImg));
-		Button stop=new Button("", new ImageView(stopImg));
 		Button play=new Button("",new ImageView(playImg));
 		Button pause=new Button("", new ImageView(pauseImg));
 		
@@ -229,7 +225,7 @@ public class Main extends Application{
 			});*/
 		
 		HBox menu=new HBox();
-		menu.getChildren().addAll(back,stop,play,pause,next);
+		menu.getChildren().addAll(play,pause,next);
 		return menu;
 	}
 
