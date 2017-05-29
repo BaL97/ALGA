@@ -93,7 +93,7 @@ public class Main extends Application{
 		ScrollPane s = new ScrollPane(layout);
 		
 		//Scene
-		scene=new Scene(s,930,880);
+		scene=new Scene(s,860,800);
 		window.setScene(scene);
 		window.show();
 		
@@ -103,7 +103,7 @@ public class Main extends Application{
 	{
 	    // TODO Auto-generated method stub
 		Rectangle divisor=new Rectangle();
-		divisor.setWidth(925);
+		divisor.setWidth(855);
 		divisor.setHeight(2);
 		divisor.setFill(Color.DARKGRAY);
 		
@@ -251,6 +251,8 @@ public class Main extends Application{
 	private HBox bottomLeft(){
 		HBox left=new HBox();
 		Text code=new Text();
+		StackPane codepane=new StackPane();
+		StackPane mergepane=new StackPane();
 		try{
 			f=new FileReader("src/file/mergesort.txt");
 			b=new BufferedReader(f);
@@ -261,7 +263,9 @@ public class Main extends Application{
 				line = b.readLine();}
 			code.setText(text);
 			f.close();}catch (Exception e){AlertBox.display("Fatal Error", "File not found");}
-		left.setPadding(new Insets(0,0,10,40));
+		left.setPadding(new Insets(0,0,0,30));
+		codepane.getChildren().add(code);
+		codepane.setPadding(new Insets(0,30,0,0));
 		Text merge=new Text();
 		try{
 			f=new FileReader("src/file/merge.txt");
@@ -272,9 +276,11 @@ public class Main extends Application{
 				text=text+"\n"+line;
 				line = b.readLine();}
 			merge.setText(text);
+			mergepane.getChildren().add(merge);
+			mergepane.setPadding(new Insets(20,0,0,30));
 			f.close();}catch (Exception e){AlertBox.display("Fatal Error", "File not found");}
 		
-		left.getChildren().addAll(code,merge);
+		left.getChildren().addAll(codepane,mergepane);
 		
 		return left;
 	}
