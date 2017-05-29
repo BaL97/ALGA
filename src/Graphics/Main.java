@@ -128,7 +128,7 @@ public class Main extends Application{
 
 	private void setupCenter(HBox center, TextArea inputtext)
 	{
-		Image sample=new Image("img/sample.png");
+		Image sample=new Image("img/mergesort.png");
 		ImageView img=new ImageView(sample);
 		center.getChildren().addAll(inputtext,img);
 		center.setPadding(new Insets(10,10,10,10));
