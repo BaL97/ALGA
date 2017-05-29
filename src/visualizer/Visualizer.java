@@ -1,8 +1,10 @@
 package visualizer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import Graphics.Main;
+import Graphics.Settings;
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.SequentialTransition;
@@ -32,6 +34,9 @@ public class Visualizer extends Application
     private static Boolean doubleFlag;
     private static Duration swapDelay;
     private static Duration compDelay;
+    private static boolean playFlag;
+    private static Rectangle[] rectangles;
+    private static HashMap<Rectangle,Double> copy;
 
     @Override
     public void start(Stage primaryStage) 
@@ -49,12 +54,14 @@ public class Visualizer extends Application
         final int WIDTH = 1000, HEIGHT = 750;
         Group root = new Group();
         
-        Rectangle[] rectangles = new Rectangle[LENGTH];
+        rectangles = new Rectangle[LENGTH];
+        copy = new HashMap<Rectangle,Double>();
         Scene s;
         sequence = new SequentialTransition();
         
         // The rectangles array is filled using the data passed
         fillR(rectangles, HEIGHT, WIDTH);
+        makeACopy();
 
 	// The rectangles are added to root group
 	root.getChildren().addAll(rectangles);
@@ -74,11 +81,19 @@ public class Visualizer extends Application
 	setDelays();
         Merge.mergesort(rectangles);
         sequence.play();
+        Visualizer.playFlag = true;
         stage.setOnCloseRequest(e->{
             Main.clearStats();
+            Visualizer.playFlag = false;
         });
     }
     
+    private static void makeACopy()
+    {
+	for(int i = 0; i < rectangles.length; i++)
+	    copy.put(rectangles[i], rectangles[i].getTranslateX());
+    }
+
     private static void setUpStats(HBox stats)
     {
 	stats.setLayoutX(0);
@@ -107,8 +122,8 @@ public class Visualizer extends Application
 
     private static void setDelays()
     {
-	swapDelay = Duration.millis(Main.getSwapDelay());
-	compDelay = Duration.millis(Main.getCompDelay());
+	swapDelay = Duration.millis(Settings.getSwapDelay());
+	compDelay = Duration.millis(Settings.getCompDelay());
     }
 
     public static void handleDoubleArray(ArrayList<Double> L)
@@ -244,7 +259,7 @@ public class Visualizer extends Application
 	    Main.updateComps();
 	    Main.updateAccesses();
 	    Main.updateAccesses();
-	    if(Main.getMode() == false)
+	    if(Settings.getMode() == false)
 		sequence.pause();
 	});
 	sequence.getChildren().add(s);
@@ -270,7 +285,7 @@ public class Visualizer extends Application
             t.setToX(xPosition);
             
             t.setOnFinished(e->{
-        	if(Main.getMode() == false)
+        	if(Settings.getMode() == false)
         	    sequence.pause();
             });
 
@@ -324,4 +339,27 @@ public class Visualizer extends Application
 	sequence.play();
     }
 
+    public static boolean isPlaying()
+    {
+	return Visualizer.playFlag;
+    }
+
+    public static void pause()
+    {
+        sequence.pause();
+    }
+
+    public static void stopAnimation()
+    {
+        sequence.stop();
+        Main.clearStats();
+        reset();
+    }
+
+    private static void reset()
+    {
+	for(int i = 0; i < rectangles.length; i++)
+	    rectangles[i].setTranslateX(copy.get(rectangles[i]));
+	
+    }
 }
