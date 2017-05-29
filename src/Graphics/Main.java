@@ -65,13 +65,15 @@ public class Main extends Application{
 		setupLeft(inputtext);
 		
 		//Center
-		GridPane center=new GridPane();
+		StackPane center=new StackPane();
 		setupCenter(center);
 		
 		//Right
 		Image algorithms=new Image("img/algorithms.png");
 		ImageView image=new ImageView(algorithms);
-		
+		StackPane right=new StackPane();
+		right.getChildren().add(image);
+		right.setPadding(new Insets(0,0,0,0));
 		
 		//Bottom
 		BorderPane bottom=new BorderPane();
@@ -94,7 +96,7 @@ public class Main extends Application{
 		layout.setTop(topMenu);
 		layout.setLeft(inputtext);
 		layout.setCenter(center);
-		layout.setRight(image);
+		layout.setRight(right);
 		layout.setBottom(bottom);
 		
 		ScrollPane s = new ScrollPane(layout);
@@ -113,17 +115,9 @@ public class Main extends Application{
 		divisor.setWidth(1500);
 		divisor.setHeight(2);
 		divisor.setFill(Color.DARKGRAY);
-		Rectangle divisor2=new Rectangle();
-		divisor2.setWidth(2);
-		divisor2.setHeight(400);
-		divisor2.setFill(Color.DARKGREY);
-		HBox div=new HBox();
-		div.getChildren().add(divisor2);
-		div.setPadding(new Insets(50,0,0,50));
 		bottom.setTop(divisor);
 		HBox left=bottomLeft();
 		bottom.setLeft(left);
-		bottom.setCenter(div);
 		Text credits=new Text();
 		credits.setText("\n\nWritten by: Andrea Berlingieri & Davide Balestra");
 		bottom.setBottom(credits);
@@ -134,8 +128,6 @@ public class Main extends Application{
 		Image sample=new Image("img/sample.png");
 		ImageView sampleimg=new ImageView(sample);
 		bottomright.getChildren().addAll(lab,sampleimg);
-		bottom.setRight(bottomright);
-	    
 	}
 
 	private void setupLeft(TextArea inputtext)
@@ -144,30 +136,16 @@ public class Main extends Application{
 		inputtext.setText("Data:\n");
 		inputtext.setPrefSize(300, 300);
 		inputtext.setMaxHeight(300);
+		inputtext.setPadding(new Insets(0,0,0,0));
 	}
 
-	private void setupCenter(GridPane center)
+	private void setupCenter(StackPane center)
 	{
-		center.setPadding(new Insets(0,0,0,0));
-		Text stat=new Text();
-		stat.setText("Stats\n\nNumber of comparisons:      ");
-		Text stat2=new Text();
-		stat2.setText("\n\nNumber of array accesses:      ");
-		Text stat3=new Text();
-		stat3.setText("\n\nExecution time:      ");
-		StackPane p1=new StackPane();
-		p1.setPadding(new Insets(0,20,20,100));
-		p1.getChildren().add(stat);
-		StackPane p2=new StackPane();
-		p2.setPadding(new Insets(0,20,20,20));
-		p2.getChildren().add(stat2);
-		StackPane p3=new StackPane();
-		p3.setPadding(new Insets(0,20,20,20));
-		p3.getChildren().add(stat3);
-		GridPane.setConstraints(p1, 0, 0);
-		GridPane.setConstraints(p2, 1, 0);
-		GridPane.setConstraints(p3, 2, 0);
-		center.getChildren().addAll(p1,p2,p3);
+		Image sample=new Image("img/sample.png");
+		ImageView img=new ImageView(sample);
+		center.getChildren().add(img);
+		center.setPadding(new Insets(0,0,10,0));
+		
 	}
 
 	public MenuBar setMenuBar(TextArea inputtext){
