@@ -14,8 +14,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * Settings window, set the animation's speed, and the mode --> single step, motion
+ * @author b_a_l
+ *
+ */
 public class Settings {
 	
+	/**
+	 * show the settings window
+	 * @param m
+	 */
 	public static void display(Main m){
 		Stage window = new Stage();
 		window.setTitle("Settings");

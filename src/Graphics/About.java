@@ -1,4 +1,3 @@
-//Documentation Class
 package Graphics;
 import javafx.stage.*;
 import javafx.scene.*;
@@ -6,10 +5,19 @@ import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.geometry.*;
 
+/**
+ * The class implements the visualization of a box with the project description
+ * @author b_a_l
+ *
+ */
 public class About {
 	
 	static boolean answer;	
 	
+	/**
+	 * print the README file into a box
+	 *  @author b_a_l
+	 */
 	public static void display(){
 		Stage window=new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);

@@ -28,6 +28,11 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import visualizer.Visualizer;
 
+/**
+ * Primary Stage, Graphic Interface of the application
+ * @author b_a_l
+ *
+ */
 public class Main extends Application{
 	Stage window;
 	Scene scene;
@@ -50,6 +55,9 @@ public class Main extends Application{
 	}
 	
 	@Override
+	/**
+	 * Show the Application
+	 */
 	public void start(Stage primaryStage) throws Exception {
 		
 		//set the window as primary stage
@@ -93,17 +101,21 @@ public class Main extends Application{
 		ScrollPane s = new ScrollPane(layout);
 		
 		//Scene
-		scene=new Scene(s,860,800);
+		scene=new Scene(s,880,850);
 		window.setScene(scene);
 		window.show();
 		
 	}
 	
+	/**
+	 * Graphic settings of bottom panel
+	 * @param bottom
+	 * bottom BorderPane
+	 */
 	private void setupBottom(BorderPane bottom)
 	{
-	    // TODO Auto-generated method stub
 		Rectangle divisor=new Rectangle();
-		divisor.setWidth(855);
+		divisor.setWidth(850);
 		divisor.setHeight(2);
 		divisor.setFill(Color.DARKGRAY);
 		
@@ -117,6 +129,11 @@ public class Main extends Application{
 		bottomright.setPadding(new Insets(50,110,0,0));
 	}
 
+	/**
+	 * Graphic settings of left panel
+	 * @param inputtext
+	 * text area
+	 */
 	private void setupLeft(TextArea inputtext)
 	{
 		inputtext.setEditable(false);
@@ -126,6 +143,13 @@ public class Main extends Application{
 		inputtext.setPadding(new Insets(10,10,10,10));
 	}
 
+	/**
+	 * Graphic settings of central panel
+	 * @param center
+	 * Central panel
+	 * @param inputtext
+	 * text area
+	 */
 	private void setupCenter(HBox center, TextArea inputtext)
 	{
 		Image sample=new Image("img/mergesort.png");
@@ -134,6 +158,13 @@ public class Main extends Application{
 		center.setPadding(new Insets(10,10,10,10));
 	}
 
+	/**
+	 * Graphic settings of menu bar
+	 * @param inputtext
+	 * text area
+	 * @return
+	 * return the menu bar
+	 */
 	public MenuBar setMenuBar(TextArea inputtext){
 			//File Menù
                 Menu file=new Menu("File");
@@ -169,13 +200,21 @@ public class Main extends Application{
                 menu.getMenus().addAll(file,help);
 		return menu;
 	}
-		
+	
+	/**
+	 * stop the application
+	 */
 	private void closeProgram(){
 		boolean x=ConfirmBox.display("Exit", "Are you sure?");
 		if(x)
 			System.exit(0);
 	}
 	
+	/**
+	 * Graphic settings of the flow control bar
+	 * @return
+	 * return the flow control bar
+	 */
 	public HBox setFlowControl(){
 		
 		Image nextImg=new Image("img/next.png");		
@@ -204,12 +243,6 @@ public class Main extends Application{
 			else
                             Visualizer.prepareStage(animation);
 			}
-			
-		//if(input.get(0).getClass().equals("Double"))
-			//	Visualizer.handleDoubleArray(input);
-			//else
-				//Visualizer.handleIntArray(input);
-			//Visualizer.prepareStage(animation);
 			}
 			else
 				AlertBox.display("Input Error", "Empty Input");
@@ -220,15 +253,16 @@ public class Main extends Application{
 		    Visualizer.play();
 		});
 		
-		/*play.setOnAction(e->{ //Animazione per massimo 10 elementi
-			try{mergesort.start(input,array,animation);}catch (Exception q){AlertBox.display("Error", q.getMessage());}
-			});*/
-		
 		HBox menu=new HBox();
 		menu.getChildren().addAll(play,pause,next);
 		return menu;
 	}
 
+	/**
+	 * fil the Integer arraylist if double is false
+	 * @param input2
+	 * Comparable arraylist
+	 */
 	private void fillInteger(ArrayList<Comparable> input2) {
 		doubleInput.clear();
 		integerInput.clear();
@@ -236,6 +270,11 @@ public class Main extends Application{
 			integerInput.add(Integer.parseInt(v.toString()));}
 	}
 
+	/**
+	 * fill the Double arraylist if double is true
+	 * @param input2
+	 * Comparable arraylist
+	 */
 	private void fillDouble(ArrayList<Comparable> input2) {
 		doubleInput.clear();
 		integerInput.clear();
@@ -244,6 +283,11 @@ public class Main extends Application{
 		}
 	}
 
+	/**
+	 * left part of the bottom pane
+	 * @return
+	 * return an Hbox with 2 text area, description and pseudocode of the Algorithm
+	 */
 	private HBox bottomLeft(){
 		HBox left=new HBox();
 		Text code=new Text();
@@ -281,34 +325,64 @@ public class Main extends Application{
 		return left;
 	}
 	
+	/**
+	 * set animation mode
+	 * @param mode
+	 * single step, motion
+	 */
+
 	public void setMode(boolean mode){
 		this.mode=mode;
 	}
 	
+	/**
+	 * set animation speed
+	 * @param speed
+	 * slow, medium, fast
+	 */
 	public void setSpeed(String speed){
 		Main.speed=speed;
 	}
 
+	/**
+	 * get delay of sectangles swap
+	 * @return
+	 */
 	public static Double getSwapDelay()
 	{
 	    return swapDelay;
 	}
 
+	/**
+	 * set delay of rectangle swap
+	 * @param swapDelay
+	 */
 	public static void setSwapDelay(Double swapDelay)
 	{
 	    Main.swapDelay = swapDelay;
 	}
 
+	/**
+	 * get delay of merge animation
+	 * @return
+	 */
 	public static Double getCompDelay()
 	{
 	    return compDelay;
 	}
 
+	/**
+	 * set delay of merge animation
+	 * @param compDelay
+	 */
 	public static void setCompDelay(Double compDelay)
 	{
 	    Main.compDelay = compDelay;
 	}
 
+	/**
+	 * confrontations counter
+	 */
 	public static void updateComps()
 	{
 	   Integer c = Integer.parseInt(comps.getText());
@@ -316,6 +390,9 @@ public class Main extends Application{
 	   comps.setText(c.toString()); 
 	}
 
+	/**
+	 * array access counter
+	 */
 	public static void updateAccesses()
 	{
 	   Integer a = Integer.parseInt(accs.getText());
@@ -324,12 +401,20 @@ public class Main extends Application{
 	    
 	}
 
+	/**
+	 * clear statistics
+	 */
 	public static void clearStats()
 	{
 	   comps.setText("0"); 
 	   accs.setText("0"); 
 	}
 
+	/**
+	 * get mode
+	 * @return
+	 * single step, motion
+	 */
 	public static Boolean getMode()
 	{
 	    return mode;

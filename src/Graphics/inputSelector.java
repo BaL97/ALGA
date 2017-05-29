@@ -19,12 +19,22 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+/**
+ * Graphics interface for the selection of the input, Handling exceptions between input types
+ * @author b_a_l
+ *
+ */
 public class inputSelector{
 	
 	public static ChoiceBox<String> type=setTypes();
 	private static ArrayList<Comparable> inputArray=new ArrayList<Comparable>();
 	public static Boolean doubleflag;
 	
+	/**
+	 * show the window in which select the input
+	 * @return
+	 * return an arraylist of comparable elemnts that contains the values to sort
+	 */
 	public static ArrayList<Comparable> display(){
 		inputArray.clear();
 		Main.doubleInput.clear();
@@ -75,6 +85,10 @@ public class inputSelector{
 			input.clear();
 			input.appendText("Input preview:\n");
 		});
+		
+		/**
+		 * Button gen --> generate a random array of values
+		 */
 		Button gen=new Button("Generate >>");
 		gen.setOnAction(e->{
 			inputArray.clear();
@@ -181,6 +195,11 @@ public class inputSelector{
 		return inputArray;	
 	}
 
+	/**
+	 * input type choice
+	 * @return
+	 * Integer, Double
+	 */
 	private static ChoiceBox<String> setTypes() {
 		ChoiceBox<String> type=new ChoiceBox<String>();
 		type.getItems().add("Integer");
@@ -190,6 +209,11 @@ public class inputSelector{
 		return type;
 	}
 
+	/**
+	 * choice the input methos
+	 * @return
+	 * input from file, random input, manual input
+	 */
 	private static ChoiceBox<String> setChoices() {
 		ChoiceBox<String> choice=new ChoiceBox<String>();
 		choice.getItems().add("Input from file...");
@@ -200,6 +224,13 @@ public class inputSelector{
 		return choice;
 	}
 
+	/**
+	 * insert a single value into the array
+	 * @param value
+	 * value to insert into the array
+	 * @return
+	 * return true if the value is added correctly, else false
+	 */
 	private static boolean manual(String value) {
 		Double v;
 		Integer k;
@@ -225,6 +256,11 @@ public class inputSelector{
 		return false;}
 	}
 
+	/**
+	 * generates a random array of Integer elements
+	 * @param n
+	 * length of the array
+	 */
 	private static void integerRandom(Integer n) {
 		inputArray.clear();
 		Random random=new Random();
@@ -235,6 +271,11 @@ public class inputSelector{
 			inputArray.add(k);}
 	}
 	
+	/**
+	 * generates a random array of Double elements
+	 * @param n
+	 * length of the array
+	 */
 	private static void doubleRandom(Integer n){
 		inputArray.clear();
 		Double k;
@@ -244,6 +285,13 @@ public class inputSelector{
 				inputArray.add(k);}
 		}
 	
+	/**
+	 * open the file and load the elements into the input array
+	 * @param n
+	 * file
+	 * @return
+	 * return true if the file is opened correctly, else false
+	 */
 	private static boolean fileOpen(File n){
 		if(n.exists())
 		inputArray.clear();
