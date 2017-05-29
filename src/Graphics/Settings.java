@@ -15,6 +15,11 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Settings {
+
+	static Boolean mode=true; //true=animation, false=single-step
+	static Double swapDelay;
+	static Double compDelay;
+	static Integer speed;
 	
 	public static void display(Main m){
 		Stage window = new Stage();
@@ -49,10 +54,10 @@ public class Settings {
 		TextField swap = new TextField();
 		swap.setMaxWidth(60);
 		swap.setPrefWidth(40);
-		swap.setText(Main.getSwapDelay() == null ? String.valueOf(0) : Main.getSwapDelay().toString());
+		swap.setText(Settings.getSwapDelay() == null ? String.valueOf(0) : Settings.getSwapDelay().toString());
 		comp.setMaxWidth(60);
 		comp.setPrefWidth(40);
-		comp.setText(Main.getCompDelay() == null ? String.valueOf(0) : Main.getCompDelay().toString());
+		comp.setText(Settings.getCompDelay() == null ? String.valueOf(0) : Settings.getCompDelay().toString());
 		VBox pane3 = new VBox();
 		pane3.getChildren().addAll(compdel,comp,swapText,swap);
 		pane3.setPadding(new Insets(20,10,10,10));
@@ -63,22 +68,49 @@ public class Settings {
 			
 		Button yesButton=new Button("Ok");
 		Button noButton=new Button("Cancel");
+		
+		selectspeed.setOnAction(e->{
+		   if(selectspeed.getValue() == "Slow" || selectspeed.getValue() == "Medium" || selectspeed.getValue() == "Fast") 
+		   {
+		       if(!comp.isDisabled())
+			   comp.setDisable(true);
+		       if(!swap.isDisabled())
+			   swap.setDisable(true);
+		   }
+		   else
+		   {
+		       if(comp.isDisabled())
+			   comp.setDisable(false);
+		       if(swap.isDisabled())
+			   swap.setDisable(false);
+		   }
+		});
 		noButton.autosize();
 		yesButton.setOnAction(e->{
                     Boolean ok = false;
                     if(!(selectspeed.getValue().equals("Select speed...")))
                     {
-                            m.setSpeed(selectspeed.getValue());
-                            ok = true;
+                	String speed = selectspeed.getValue();
+                	Integer choice;
+                	if(speed == "Slow")
+                	    choice = 0;
+                	else if (speed == "Medium")
+                	    choice = 1;
+                	else if (speed == "Fast")
+                	    choice = 2;
+                	else
+                	    choice = null;
+                        setSpeed(choice);
+                        ok = true;
                     }
                     else
                     {
                 	Boolean swCheck = false,compCheck = false;
                         try
                         {
-                            Main.setSwapDelay(Double.parseDouble(swap.getText()));
+                            setSwapDelay(Double.parseDouble(swap.getText()));
                             swCheck = true;
-                            Main.setCompDelay(Double.parseDouble(comp.getText()));
+                            setCompDelay(Double.parseDouble(comp.getText()));
                             compCheck = true;
                             ok = true;
                         }
@@ -93,9 +125,9 @@ public class Settings {
                         }
                     if(!(selectmode.getValue().equals("Select mode..."))){
                             if(selectmode.getValue().equals("Animation"))
-                                    m.setMode(true);
+                                    setMode(true);
                             else
-                                    m.setMode(false);
+                                    setMode(false);
                     }
                     if(ok)
                         window.close();
@@ -119,6 +151,44 @@ public class Settings {
 		Scene scene=new Scene(layout);
 		window.setScene(scene);
 		window.showAndWait();
+	}
+
+	public static void setMode(boolean mode){
+		Settings.mode=mode;
+	}
+	
+	public static void setSpeed(Integer speed){
+		Settings.speed=speed;
+	}
+
+	public static Integer getSpeed(){
+	    return Settings.speed;
+	}
+
+
+	public static Double getSwapDelay()
+	{
+	    return swapDelay;
+	}
+
+	public static void setSwapDelay(Double swapDelay)
+	{
+	    Settings.swapDelay = swapDelay;
+	}
+
+	public static Double getCompDelay()
+	{
+	    return compDelay;
+	}
+
+	public static void setCompDelay(Double compDelay)
+	{
+	    Settings.compDelay = compDelay;
+	}
+	
+	public static Boolean getMode()
+	{
+	    return Settings.mode;
 	}
 
 }

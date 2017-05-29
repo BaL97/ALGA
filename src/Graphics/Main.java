@@ -4,7 +4,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 import javafx.application.Application;
-import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -30,16 +29,12 @@ import visualizer.Visualizer;
 public class Main extends Application{
 	Stage window;
 	Scene scene;
-	ArrayList<Comparable> input=new ArrayList<Comparable>();
+	ArrayList<Number> input=new ArrayList<Number>();
 	static ArrayList<Double> doubleInput=new ArrayList<Double>();
 	static ArrayList<Integer> integerInput=new ArrayList<Integer>();
 	GridPane animation=new GridPane();
 	FileReader f;
 	BufferedReader b;
-	static Boolean mode=true; //true=animation, false=single-step
-	static Double swapDelay;
-	static Double compDelay;
-	static String speed="medium"; //slow, medium, fast
 	public static Label comps = new Label("0");
 	public static Label accs = new Label("0");
 	String link="https://github.com/BaL97";
@@ -107,7 +102,6 @@ public class Main extends Application{
 	
 	private void setupBottom(BorderPane bottom)
 	{
-	    // TODO Auto-generated method stub
 		Rectangle divisor=new Rectangle();
 		divisor.setWidth(1500);
 		divisor.setHeight(2);
@@ -214,71 +208,93 @@ public class Main extends Application{
 	public HBox setFlowControl(){
 		
 		Image nextImg=new Image("img/next.png");		
-		Image backImg=new Image("img/back.png");
+		//Image backImg=new Image("img/back.png");
 		Image stopImg=new Image("img/stop.png");
 		Image pauseImg=new Image("img/pause.png");
 		Image playImg=new Image("img/play.png");
 		
-		Button back=new Button("",new ImageView(backImg));
+		//Button back=new Button("",new ImageView(backImg));
 		Button next=new Button("",new ImageView(nextImg));
 		Button stop=new Button("", new ImageView(stopImg));
 		Button play=new Button("",new ImageView(playImg));
 		Button pause=new Button("", new ImageView(pauseImg));
 		
 		play.setOnAction(e->{
-			if(input.size()!=0){
-			{Stage animation=new Stage();
-			if(inputSelector.doubleflag){
-				fillDouble(input);
-				Visualizer.handleDoubleArray(doubleInput);}
-			else{
-				fillInteger(input);
-				Visualizer.handleIntArray(integerInput);}
-			if (Main.getCompDelay() == null && Main.getSwapDelay() == null)
-			    AlertBox.display("Error, delay not set", "Please set the delay for the comparison animation and for the rectangle movemnt animation in the settings menu");
-			else if(Main.getCompDelay() == null)
-			    AlertBox.display("Error, delay not set", "Please set the delay for the comparison animation in the settings menu");
-			else if(Main.getSwapDelay() == null)
-			    AlertBox.display("Error, delay not set", "Please set the delay for the rectangle movement animation in the settings menu");
-			else
-                            Visualizer.prepareStage(animation);
-			}
-			
-		//if(input.get(0).getClass().equals("Double"))
-			//	Visualizer.handleDoubleArray(input);
-			//else
-				//Visualizer.handleIntArray(input);
-			//Visualizer.prepareStage(animation);
-			}
-			else
-				AlertBox.display("Input Error", "Empty Input");
-			
-		});
+                            if(!Visualizer.isPlaying())
+                            {
+                                Stage animation=new Stage();
+                                createNewAnimation(animation);
+                            }
+                            else
+                            {
+                                Settings.setMode(true);
+                        	Visualizer.play();
+                            }
+                });
+		
 		
 		next.setOnAction(e->{
 		    Visualizer.play();
 		});
 		
-		/*play.setOnAction(e->{ //Animazione per massimo 10 elementi
-			try{mergesort.start(input,array,animation);}catch (Exception q){AlertBox.display("Error", q.getMessage());}
-			});*/
+		pause.setOnAction(e->{
+		    Settings.setMode(false);
+		    Visualizer.pause();
+		});
+
+		stop.setOnAction(e->{
+		    Visualizer.stopAnimation();
+		});
 		
 		HBox menu=new HBox();
-		menu.getChildren().addAll(back,stop,play,pause,next);
+		menu.getChildren().addAll(stop,play,pause,next);
 		return menu;
 	}
 
-	private void fillInteger(ArrayList<Comparable> input2) {
+	private void createNewAnimation(Stage animation)
+	{
+            if(input.size()!=0)
+            {
+                if(inputSelector.doubleflag)
+                {
+                    fillDouble(input);
+                    Visualizer.handleDoubleArray(doubleInput);
+                }
+                else
+                {
+                    fillInteger(input);
+                    Visualizer.handleIntArray(integerInput);
+                }
+
+                if(Settings.getSpeed() == null)
+                {
+                    if (Settings.getCompDelay() == null && Settings.getSwapDelay() == null)
+                        AlertBox.display("Error, delay not set", "Please set the delay for the comparison animation and for the rectangle movemnt animation in the settings menu");
+                    else if(Settings.getCompDelay() == null)
+                        AlertBox.display("Error, delay not set", "Please set the delay for the comparison animation in the settings menu");
+                    else if(Settings.getSwapDelay() == null)
+                        AlertBox.display("Error, delay not set", "Please set the delay for the rectangle movement animation in the settings menu");
+                    else
+                        Visualizer.prepareStage(animation);
+                }
+                else
+                    Visualizer.prepareStage(animation);
+            }
+            else
+                AlertBox.display("Input Error", "Empty Input");
+       }	
+
+	private void fillInteger(ArrayList<Number> input2) {
 		doubleInput.clear();
 		integerInput.clear();
-		for(Comparable v:input2){
+		for(Number v:input2){
 			integerInput.add(Integer.parseInt(v.toString()));}
 	}
 
-	private void fillDouble(ArrayList<Comparable> input2) {
+	private void fillDouble(ArrayList<Number> input2) {
 		doubleInput.clear();
 		integerInput.clear();
-		for(Comparable v:input2){
+		for(Number v:input2){
 			doubleInput.add(Double.parseDouble(v.toString()));
 		}
 	}
@@ -314,34 +330,6 @@ public class Main extends Application{
 		return left;
 	}
 	
-	public void setMode(boolean mode){
-		this.mode=mode;
-	}
-	
-	public void setSpeed(String speed){
-		Main.speed=speed;
-	}
-
-	public static Double getSwapDelay()
-	{
-	    return swapDelay;
-	}
-
-	public static void setSwapDelay(Double swapDelay)
-	{
-	    Main.swapDelay = swapDelay;
-	}
-
-	public static Double getCompDelay()
-	{
-	    return compDelay;
-	}
-
-	public static void setCompDelay(Double compDelay)
-	{
-	    Main.compDelay = compDelay;
-	}
-
 	public static void updateComps()
 	{
 	   Integer c = Integer.parseInt(comps.getText());
@@ -361,11 +349,6 @@ public class Main extends Application{
 	{
 	   comps.setText("0"); 
 	   accs.setText("0"); 
-	}
-
-	public static Boolean getMode()
-	{
-	    return mode;
 	}
 
 }
