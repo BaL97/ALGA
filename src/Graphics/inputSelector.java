@@ -1,6 +1,7 @@
 package Graphics;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Random;
@@ -22,10 +23,11 @@ import javafx.stage.Stage;
 public class inputSelector{
 	
 	public static ChoiceBox<String> type=setTypes();
-	private static ArrayList<Comparable> inputArray=new ArrayList<Comparable>();
+	private static ArrayList<Number> inputArray=new ArrayList<Number>();
 	public static Boolean doubleflag;
+	private static Stage window;
 	
-	public static ArrayList<Comparable> display(){
+	public static ArrayList<Number> display(){
 		inputArray.clear();
 		
 		//File loader
@@ -33,7 +35,7 @@ public class inputSelector{
 		loader.setTitle("Select the input file");
 		
 		//Stage
-		Stage window = new Stage();
+		window = new Stage();
 		window.setTitle("Load Input");
 		
 		ChoiceBox<String> choice=setChoices();
@@ -57,57 +59,94 @@ public class inputSelector{
 		
 		//BUTTONS
 		Button ok=new Button("Ok");
-		ok.setOnAction(e->{
-			if((inputArray.isEmpty()))
-				AlertBox.display("Input Error!", "The input is empty, please insert some data");
-			else
-				window.close();
-		});
 		Button cancel=new Button("Cancel");
-		cancel.setOnAction(e->{
-			window.close();
-		});			
 		Button clear=new Button("Clear");
-		clear.setOnAction(e->{
-			inputArray.clear();
-			input.clear();
-			input.appendText("Input preview:\n");
-		});
 		Button gen=new Button("Generate >>");
-		gen.setOnAction(e->{
-			input.clear();
-			input.appendText("Input preview:\n");
-			try{
-			if(n.getText().equals(""))
-				AlertBox.display("Input Error!", "Please insert n");
-			else if(type.getValue().equals("Select Input type..."))
-				AlertBox.display("Input Error!", "Please select a type");
-			else{
-				if(doubleflag)
-					doubleRandom(Integer.parseInt(n.getText()));
-				else
-					integerRandom(Integer.parseInt(n.getText()));
-				
-				for(int i=0;i<Integer.parseInt(n.getText());i++){
-					input.appendText(inputArray.get(i).toString()+"\n");}
-				}}catch (Exception d) {AlertBox.display("Input Error!", "Wrong input for n");}
-		});
 		Button add=new Button("Add >>");
-		add.setOnAction(e->{
-		    StringTokenizer tokenizer = new StringTokenizer(data.getText());
-		    while(tokenizer.hasMoreTokens())
+		setUpButtons(ok,cancel,clear,gen,add,input,n,data,loader, choice);
+				
+		
+		//setting layouts
+		GridPane.setConstraints(ok,1, 1);
+		GridPane.setConstraints(cancel, 2, 1);
+		buttons.getChildren().addAll(ok,cancel);
+		buttons.setPadding(new Insets(10,10,10,10));
+		buttons.setHgap(10);
+		buttons.setAlignment(Pos.CENTER);
+		layout.setBottom(buttons);
+		selection.setPadding(new Insets(10,10,10,10));
+		selection.setHgap(10);
+		selection.setVgap(10);
+		GridPane.setConstraints(choice, 0, 0);
+		GridPane.setConstraints(type, 0, 1);
+		GridPane.setConstraints(label, 1, 1);
+		GridPane.setConstraints(n, 2, 1);
+		GridPane.setConstraints(data, 0, 3);
+		GridPane.setConstraints(add, 1, 3);
+		GridPane.setConstraints(clear, 3, 3);
+		GridPane.setConstraints(gen, 3, 1);
+		selection.getChildren().addAll(choice,label,type,n,data,add,gen,clear);
+		layout.setTop(selection);
+		layout.setCenter(input);
+		layout.setPadding(new Insets(10,10,10,10));	
+		Scene scene=new Scene(layout);
+		window.setScene(scene);
+		window.showAndWait();
+		
+		return inputArray;	
+	}
+
+	private static void setUpButtons(Button ok, Button cancel, Button clear, Button gen, Button add, TextArea input, TextField n, TextField data, FileChooser loader, ChoiceBox<String> choice)
+	{
+		setUpOkAndCancelButtons(ok,cancel);
+		setUpClearAndGenButtons(clear,gen,input,n);
+		setUpAddButton(add,data,input);
+		setUpChoice(choice,add,data,n,gen,input,loader);
+		setUpType(type,add,data);
+		gen.setDisable(true);
+		n.setDisable(true);
+		add.setDisable(true);
+		data.setDisable(true);
+	    
+	}
+
+	private static void setUpType(ChoiceBox<String> choice, Button add, TextField data)
+	{
+		type.setOnAction(e->{
+		    if(choice.getValue() != "Select Input source...")
 		    {
-			String datum = tokenizer.nextToken();
-			if(manual(datum))
-				input.appendText(datum +"\n");
-			else
-				AlertBox.display("Input Error!", "Please check your input");
+			if(type.getValue() != "Select Input type...")
+			{
+                            if(type.getValue().equals("Double"))
+                                    doubleflag=true;
+                            else if(type.getValue().equals("Integer"))
+                                    doubleflag=false;
+			}
+		    }
+		    else 
+		    {
+			if(type.getValue() != "Select Input type...")
+			    doubleflag = type.getValue() == "Double" ? true : false;
+			add.setDisable(true);
+			data.setDisable(true);
 		    }
 		});
-				
+	    
+	}
+
+	private static void setUpChoice(ChoiceBox<String> choice, Button add, TextField data, TextField n, Button gen,
+		TextArea input, FileChooser loader)
+	{
+	    // 
 		//Choices actions
 		choice.setOnAction(e->{
 			switch (choice.getValue()){
+			case "Select Input source...":
+                            add.setDisable(true);
+                            data.setDisable(true);
+                            n.setDisable(true);
+                            gen.setDisable(true);
+			    break;
 			case "Input from file...":
 				add.setDisable(true);
 				data.setDisable(true);
@@ -131,49 +170,90 @@ public class inputSelector{
 				gen.setDisable(false);
 				break;
 			case "Manual Insert":
-				add.setDisable(false);
 				n.setDisable(true);
-				data.setDisable(false);
 				gen.setDisable(true);
+			    if(type.getValue() != "Select Input type...")
+			    {
+				add.setDisable(false);
+				data.setDisable(false);
 				break;
+			    }
 				}
 		});		
 		
-		type.setOnAction(e->{
-			if(type.getValue().equals("Double"))
-				doubleflag=true;
-			else if(type.getValue().equals("Integer"))
-				doubleflag=false;
+	}
+
+	private static void setUpAddButton(Button add, TextField data, TextArea input)
+	{
+	    // 
+		add.setOnAction(e->{
+		    StringTokenizer tokenizer = new StringTokenizer(data.getText());
+		    try
+		    {
+                        while(tokenizer.hasMoreTokens())
+                        {
+                            String datum = tokenizer.nextToken();
+                            if(manual(datum))
+                                    input.appendText(datum +"\n");
+                            else
+                                    AlertBox.display("Input Error!", "Please check your input");
+                        }
+		    }
+		    catch (NumberFormatException nfe)
+		    {
+			AlertBox.display("Input Error", "There is at least a non numeric value in the input");
+		    }
 		});
-		
-		//setting layouts
-		buttons.setConstraints(ok,1, 1);
-		buttons.setConstraints(cancel, 2, 1);
-		buttons.getChildren().addAll(ok,cancel);
-		buttons.setPadding(new Insets(10,10,10,10));
-		buttons.setHgap(10);
-		buttons.setAlignment(Pos.CENTER);
-		layout.setBottom(buttons);
-		selection.setPadding(new Insets(10,10,10,10));
-		selection.setHgap(10);
-		selection.setVgap(10);
-		selection.setConstraints(choice, 0, 0);
-		selection.setConstraints(type, 0, 1);
-		selection.setConstraints(label, 1, 1);
-		selection.setConstraints(n, 2, 1);
-		selection.setConstraints(data, 0, 3);
-		selection.setConstraints(add, 1, 3);
-		selection.setConstraints(clear, 3, 3);
-		selection.setConstraints(gen, 3, 1);
-		selection.getChildren().addAll(choice,label,type,n,data,add,gen,clear);
-		layout.setTop(selection);
-		layout.setCenter(input);
-		layout.setPadding(new Insets(10,10,10,10));	
-		Scene scene=new Scene(layout);
-		window.setScene(scene);
-		window.showAndWait();
-		
-		return inputArray;	
+
+	    
+	}
+
+	private static void setUpClearAndGenButtons(Button clear, Button gen, TextArea input, TextField n)
+	{
+		clear.setOnAction(e->{
+			inputArray.clear();
+			input.clear();
+			input.appendText("Input preview:\n");
+		});
+
+		gen.setOnAction(e->{
+			input.clear();
+			input.appendText("Input preview:\n");
+			try{
+
+                        if(n.getText().equals(""))
+                            AlertBox.display("Input Error!", "Please insert n");
+                        else if(n.getText().matches("[^0-9]+$"))
+                            AlertBox.display("Input Error!", "n must be an integer (no spaces)");
+                        else if(type.getValue().equals("Select Input type..."))
+                                AlertBox.display("Input Error!", "Please select a type");
+                        else{
+                                if(doubleflag)
+                                        doubleRandom(Integer.parseInt(n.getText()));
+                                else
+                                        integerRandom(Integer.parseInt(n.getText()));
+                                
+                                for(int i=0;i<Integer.parseInt(n.getText());i++){
+                                        input.appendText(inputArray.get(i).toString()+"\n");}
+                                }
+			}
+			catch (NumberFormatException nfe) 
+			{AlertBox.display("Input Error!", "Input for n is not an Integer");}
+		});
+	    
+	}
+
+	private static void setUpOkAndCancelButtons(Button ok, Button cancel)
+	{
+            ok.setOnAction(e->{
+                    if((inputArray.isEmpty()))
+                            AlertBox.display("Input Error!", "The input is empty, please insert some data");
+                    else
+                            window.close();
+            });
+            cancel.setOnAction(e->{
+                    window.close();
+            });			
 	}
 
 	private static ChoiceBox<String> setTypes() {
@@ -195,14 +275,18 @@ public class inputSelector{
 		return choice;
 	}
 
-	private static boolean manual(String value) {
+	private static boolean manual(String value) throws NumberFormatException {
 		Double v;
 		Integer k;
 		
 		if(doubleflag){
 			try {
 				v=Double.parseDouble(value); //catch exceptions
-			} catch (Exception e) {return false;}
+			} catch (NullPointerException e) {return false;}
+			catch (NumberFormatException nfe)
+			{
+			    throw nfe;
+			}
 			
 			inputArray.add(v);
 			return true;}
@@ -210,7 +294,11 @@ public class inputSelector{
 		else{
 			try {
 				k=Integer.parseInt(value);
-			} catch (Exception e) {return false;}
+			} catch (NullPointerException e) {return false;}
+			catch (NumberFormatException nfe)
+			{
+			    throw nfe;
+			}
 			inputArray.add(k);
 			return true;
 		}	
@@ -258,7 +346,13 @@ public class inputSelector{
 						flag=false;
 				}
 			}
-			b.close();} catch (Exception e) {return false;}
+			b.close();} 
+		catch(FileNotFoundException fnf)
+		{ 
+		    AlertBox.display("Error", "File was not found");
+		    return false;
+		}
+		catch (Exception e) {return false;}
 		return flag;
 	}
 }
