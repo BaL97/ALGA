@@ -60,20 +60,13 @@ public class Main extends Application{
 			closeProgram();	
 		});
 
-		//Left
 		TextArea inputtext=new TextArea();
 		setupLeft(inputtext);
 		
 		//Center
-		StackPane center=new StackPane();
-		setupCenter(center);
+		HBox center=new HBox();
+		setupCenter(center,inputtext);
 		
-		//Right
-		Image algorithms=new Image("img/algorithms.png");
-		ImageView image=new ImageView(algorithms);
-		StackPane right=new StackPane();
-		right.getChildren().add(image);
-		right.setPadding(new Insets(0,0,0,0));
 		
 		//Bottom
 		BorderPane bottom=new BorderPane();
@@ -94,15 +87,13 @@ public class Main extends Application{
 		//Window's layout
 		BorderPane layout = new BorderPane();
 		layout.setTop(topMenu);
-		layout.setLeft(inputtext);
 		layout.setCenter(center);
-		layout.setRight(right);
 		layout.setBottom(bottom);
 		
 		ScrollPane s = new ScrollPane(layout);
 		
 		//Scene
-		scene=new Scene(s,1500,800);
+		scene=new Scene(s,930,880);
 		window.setScene(scene);
 		window.show();
 		
@@ -112,9 +103,10 @@ public class Main extends Application{
 	{
 	    // TODO Auto-generated method stub
 		Rectangle divisor=new Rectangle();
-		divisor.setWidth(1500);
+		divisor.setWidth(925);
 		divisor.setHeight(2);
 		divisor.setFill(Color.DARKGRAY);
+		
 		bottom.setTop(divisor);
 		HBox left=bottomLeft();
 		bottom.setLeft(left);
@@ -123,11 +115,6 @@ public class Main extends Application{
 		bottom.setBottom(credits);
 		VBox bottomright=new VBox();
 		bottomright.setPadding(new Insets(50,110,0,0));
-		Label lab=new Label("Merge Sort Sample\n");
-		lab.setPadding(new Insets(0,20,20,20));
-		Image sample=new Image("img/sample.png");
-		ImageView sampleimg=new ImageView(sample);
-		bottomright.getChildren().addAll(lab,sampleimg);
 	}
 
 	private void setupLeft(TextArea inputtext)
@@ -136,16 +123,15 @@ public class Main extends Application{
 		inputtext.setText("Data:\n");
 		inputtext.setPrefSize(300, 300);
 		inputtext.setMaxHeight(300);
-		inputtext.setPadding(new Insets(0,0,0,0));
+		inputtext.setPadding(new Insets(10,10,10,10));
 	}
 
-	private void setupCenter(StackPane center)
+	private void setupCenter(HBox center, TextArea inputtext)
 	{
 		Image sample=new Image("img/sample.png");
 		ImageView img=new ImageView(sample);
-		center.getChildren().add(img);
-		center.setPadding(new Insets(0,0,10,0));
-		
+		center.getChildren().addAll(inputtext,img);
+		center.setPadding(new Insets(10,10,10,10));
 	}
 
 	public MenuBar setMenuBar(TextArea inputtext){
