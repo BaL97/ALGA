@@ -20,13 +20,19 @@ Once the input has been successfully loaded, the user can adjust the animation s
 There are fundamentally two settings:
 
 1. the animation "speed"
+
     The animation speed can be automatic calculated based on the number of values, by choosing on of the three available
     options:
     1. Slow
     2. Medium
     3. Fast
 
+    Alternatively, the user can insert manually the desired delay for the comparison animation and for the movement
+    animation.
+
+
 2. the animation mode, which can be:
+
     1. Step-by-Step: the user is able to advance the animation one step at a time
     2. Motion: the animation runs by itself
 
