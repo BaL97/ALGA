@@ -175,7 +175,7 @@ public class Main extends Application{
                 Menu help=new Menu("Help");
                 MenuItem about = new MenuItem("About...");
                 help.getItems().add(about); //load input
-                MenuItem git=new MenuItem("Git...");
+                MenuItem git=new MenuItem("Github...");
                 help.getItems().add(git);
                 about.setOnAction(e->About.display());
                 git.setOnAction(e->webPage.display(link, "GitHub"));

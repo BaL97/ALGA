@@ -54,7 +54,7 @@ where TYPE can be Integer or Double
 
 ### About and Github page
 
-In the `About` menu the user can find simple instructions to use the app and the github page for the project
+In the `About` menu the user can find simple instructions to use the app and the github page of the project
 
 
 

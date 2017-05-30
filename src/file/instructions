@@ -1,0 +1,18 @@
+To load the input, press File > Load input and
+choose the desired input source and type
+
+To adjust the animation settings, press 
+File > Settings and set the animation "speed"
+and the animation mode
+
+The play button creates a new window with the animation.
+It starts it with the mode set in the Settings. If the 
+mode is Step-by-step, press Next button to advance 
+the animation. The Stop button stops the animation
+and puts the bars to their original place. The pause
+button pauses the animation and sets it to Step-by-step
+mode.
+
+It is advised to keep the animation window as
+'Always on top' to use the animation controls and
+keep seeing the animation
