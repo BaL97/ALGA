@@ -219,8 +219,8 @@ public class Main extends Application{
                             }
                             else
                             {
-                                //Settings.setMode(true);
-                        	Visualizer.play();
+                                Settings.setMode(true);
+								Visualizer.play();
                             }
                 });
 		

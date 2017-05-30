@@ -21,7 +21,7 @@ import javafx.stage.Stage;
  */
 public class Settings {
 
-	static Boolean mode=true; //true=animation, false=single-step
+	static Boolean mode = true; //true=animation, false=single-step
 	static Double swapDelay;
 	static Double compDelay;
 	static Integer speed;
@@ -129,6 +129,7 @@ public class Settings {
                             else
                                 AlertBox.display("Error, invalid input" , "Input for Comparison delay is not a number");
                         }
+					}
                     if(!(selectmode.getValue().equals("Select mode..."))){
                             if(selectmode.getValue().equals("Animation"))
                                     setMode(true);
@@ -137,7 +138,6 @@ public class Settings {
                     }
                     else
                 	setMode(true);
-		}
                     if(ok)
                         window.close();
 		});
@@ -147,7 +147,6 @@ public class Settings {
 
 	private static void setUpDelays(TextField comp2, TextField swap2, VBox pane3)
 	{
-	    // TODO Auto-generated method stub
 		Text compdel = new Text("Comparison delay (in ms)");
 		Text swapText = new Text("Rectangles movement delay (in ms)");
 		swap.setMaxWidth(60);
@@ -164,7 +163,6 @@ public class Settings {
 
 	private static void setUpModeSelector(ChoiceBox<String> selectmode, StackPane pane2)
 	{
-	    // TODO Auto-generated method stub
             selectmode.getItems().add("Select mode...");
             Boolean mode = Settings.getMode();
             if(mode == true)
@@ -172,7 +170,7 @@ public class Settings {
             else if (mode == false)
                 selectmode.setValue("Single Step");
             else
-        	selectmode.setValue("Select mode...");
+				selectmode.setValue("Select mode...");
             selectmode.getItems().add("Animation");
             selectmode.getItems().add("Single Step");
             pane2.getChildren().add(selectmode);

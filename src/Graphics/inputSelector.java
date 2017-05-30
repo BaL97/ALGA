@@ -224,6 +224,7 @@ public class inputSelector{
 		    StringTokenizer tokenizer = new StringTokenizer(data.getText());
 		    try
 		    {
+		    			input.clear();
                         while(tokenizer.hasMoreTokens() && noerrors)
                         {
                             String datum = tokenizer.nextToken();
@@ -287,8 +288,8 @@ public class inputSelector{
                             AlertBox.display("Input Error!", "The input is empty, please insert some data");
                     else
                     {
-                	Main.integerInput.clear();
-                	Main.doubleInput.clear();
+							Main.integerInput.clear();
+							Main.doubleInput.clear();
                             window.close();
                     }
             });
@@ -387,7 +388,7 @@ public class inputSelector{
 		Integer k;
 		
 		for (int i=0;i<n;i++){
-			k=random.nextInt(1000);
+			k=random.nextInt(n);
 			inputArray.add(k);}
 	}
 	
@@ -400,7 +401,7 @@ public class inputSelector{
 		Double k;
 		Random random=new Random();
 			for (int i=0;i<n;i++){
-				k=random.nextDouble()*1000;
+				k=random.nextDouble()*n;
 				inputArray.add(k);}
 		}
 	
