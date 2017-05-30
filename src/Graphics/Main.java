@@ -26,6 +26,11 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import visualizer.Visualizer;
 
+/**
+ * Primary Stage, Graphical Interface for the application
+ * @author b_a_l
+ *
+ */
 public class Main extends Application{
 	Stage window;
 	Scene scene;
@@ -37,7 +42,7 @@ public class Main extends Application{
 	BufferedReader b;
 	public static Label comps = new Label("0");
 	public static Label accs = new Label("0");
-	String link="https://github.com/BaL97";
+	public static String link="https://github.com/andrea-berling/ALGA";
 	
 	public static void main (String args[]){
 		launch(args);
@@ -54,17 +59,12 @@ public class Main extends Application{
 			closeProgram();	
 		});
 
-		//Left
 		TextArea inputtext=new TextArea();
 		setupLeft(inputtext);
 		
 		//Center
-		GridPane center=new GridPane();
-		setupCenter(center);
-		
-		//Right
-		Image algorithms=new Image("img/algorithms.png");
-		ImageView image=new ImageView(algorithms);
+		HBox center=new HBox();
+		setupCenter(center,inputtext);
 		
 		
 		//Bottom
@@ -86,83 +86,70 @@ public class Main extends Application{
 		//Window's layout
 		BorderPane layout = new BorderPane();
 		layout.setTop(topMenu);
-		layout.setLeft(inputtext);
 		layout.setCenter(center);
-		layout.setRight(image);
 		layout.setBottom(bottom);
 		
 		ScrollPane s = new ScrollPane(layout);
 		
 		//Scene
-		scene=new Scene(s,1500,800);
+		scene=new Scene(s,880,850);
 		window.setScene(scene);
 		window.show();
 		
 	}
 	
+	/**
+	 * Sets up the layout for the bottom panel passed as a parameter
+	 * @param bottom The BorderPane to set up
+	 */
 	private void setupBottom(BorderPane bottom)
 	{
 		Rectangle divisor=new Rectangle();
-		divisor.setWidth(1500);
+		divisor.setWidth(850);
 		divisor.setHeight(2);
 		divisor.setFill(Color.DARKGRAY);
-		Rectangle divisor2=new Rectangle();
-		divisor2.setWidth(2);
-		divisor2.setHeight(400);
-		divisor2.setFill(Color.DARKGREY);
-		HBox div=new HBox();
-		div.getChildren().add(divisor2);
-		div.setPadding(new Insets(50,0,0,50));
+		
 		bottom.setTop(divisor);
 		HBox left=bottomLeft();
 		bottom.setLeft(left);
-		bottom.setCenter(div);
 		Text credits=new Text();
 		credits.setText("\n\nWritten by: Andrea Berlingieri & Davide Balestra");
 		bottom.setBottom(credits);
 		VBox bottomright=new VBox();
 		bottomright.setPadding(new Insets(50,110,0,0));
-		Label lab=new Label("Merge Sort Sample\n");
-		lab.setPadding(new Insets(0,20,20,20));
-		Image sample=new Image("img/sample.png");
-		ImageView sampleimg=new ImageView(sample);
-		bottomright.getChildren().addAll(lab,sampleimg);
-		bottom.setRight(bottomright);
-	    
 	}
 
+	/**
+	 * Sets up the layout for the left part of the main window
+	 * @param inputtext The TextArea to set up
+	 */
 	private void setupLeft(TextArea inputtext)
 	{
 		inputtext.setEditable(false);
 		inputtext.setText("Data:\n");
 		inputtext.setPrefSize(300, 300);
 		inputtext.setMaxHeight(300);
+		inputtext.setPadding(new Insets(10,10,10,10));
 	}
 
-	private void setupCenter(GridPane center)
+	/**
+	 * Sets up the central part of the main window
+	 * @param center An HBox to be set up for the central part of the main window
+	 * @param inputtext A TextArea to be added to the central part
+	 */
+	private void setupCenter(HBox center, TextArea inputtext)
 	{
-		center.setPadding(new Insets(0,0,0,0));
-		Text stat=new Text();
-		stat.setText("Stats\n\nNumber of comparisons:      ");
-		Text stat2=new Text();
-		stat2.setText("\n\nNumber of array accesses:      ");
-		Text stat3=new Text();
-		stat3.setText("\n\nExecution time:      ");
-		StackPane p1=new StackPane();
-		p1.setPadding(new Insets(0,20,20,100));
-		p1.getChildren().add(stat);
-		StackPane p2=new StackPane();
-		p2.setPadding(new Insets(0,20,20,20));
-		p2.getChildren().add(stat2);
-		StackPane p3=new StackPane();
-		p3.setPadding(new Insets(0,20,20,20));
-		p3.getChildren().add(stat3);
-		GridPane.setConstraints(p1, 0, 0);
-		GridPane.setConstraints(p2, 1, 0);
-		GridPane.setConstraints(p3, 2, 0);
-		center.getChildren().addAll(p1,p2,p3);
+		Image sample=new Image("img/mergesort.png");
+		ImageView img=new ImageView(sample);
+		center.getChildren().addAll(inputtext,img);
+		center.setPadding(new Insets(10,10,10,10));
 	}
 
+	/**
+	 * Sets up the layout for the MenuBar
+	 * @param inputtext A text area containing the input for the application
+	 * @return A fully set up MenuBar
+	 */
 	public MenuBar setMenuBar(TextArea inputtext){
 			//File Menù
                 Menu file=new Menu("File");
@@ -173,8 +160,8 @@ public class Main extends Application{
                 MenuItem exit=new MenuItem("Exit");
                 file.getItems().add(exit); //exit the program
                 load.setOnAction(e->{
-                        inputtext.clear();
-                        inputtext.setText("Data:\n\n");
+                //        inputtext.clear();
+                //        inputtext.setText("Data:\n\n");
                         input=inputSelector.display();
                         for(int i=0;i<input.size();i++){
                                 inputtext.appendText(input.get(i)+"\n");				
@@ -198,22 +185,27 @@ public class Main extends Application{
                 menu.getMenus().addAll(file,help);
 		return menu;
 	}
-		
+	
+	/**
+	 * Stops the application and closes all the windows related to it
+	 */
 	private void closeProgram(){
 		boolean x=ConfirmBox.display("Exit", "Are you sure?");
 		if(x)
-			window.close();
+			System.exit(0);
 	}
 	
+	/**
+	 * Sets up the flow control bar
+	 * @return The fully set up flow control bar
+	 */
 	public HBox setFlowControl(){
 		
 		Image nextImg=new Image("img/next.png");		
-		//Image backImg=new Image("img/back.png");
 		Image stopImg=new Image("img/stop.png");
 		Image pauseImg=new Image("img/pause.png");
 		Image playImg=new Image("img/play.png");
 		
-		//Button back=new Button("",new ImageView(backImg));
 		Button next=new Button("",new ImageView(nextImg));
 		Button stop=new Button("", new ImageView(stopImg));
 		Button play=new Button("",new ImageView(playImg));
@@ -227,14 +219,24 @@ public class Main extends Application{
                             }
                             else
                             {
-                                Settings.setMode(true);
+                                //Settings.setMode(true);
                         	Visualizer.play();
                             }
                 });
 		
 		
 		next.setOnAction(e->{
-		    Visualizer.play();
+		    if(!Visualizer.isPlaying())
+		    {
+			Stage animation = new Stage();
+			Settings.setMode(false);
+			createNewAnimation(animation);
+		    }
+		    else
+		    {
+			Settings.setMode(false);
+                        Visualizer.play();
+		    }
 		});
 		
 		pause.setOnAction(e->{
@@ -251,6 +253,12 @@ public class Main extends Application{
 		return menu;
 	}
 
+	/**
+	 * Given an empty, but initialized Stage (not empty), it creates a new window 
+	 * for the sort animation. If the input is void or the speed settings aren't set,
+	 * no animation is set up and an error message is printed
+	 * @param animation The stage to use for the animation
+	 */
 	private void createNewAnimation(Stage animation)
 	{
             if(input.size()!=0)
@@ -284,6 +292,11 @@ public class Main extends Application{
                 AlertBox.display("Input Error", "Empty Input");
        }	
 
+	/**
+	 * Given an ArrayList of Numbers, it converts them to Integer and puts them
+	 * in an ArrayList used to pass the input to the animation
+	 * @param input2 The ArrayList of Numbers containing the input
+	 */
 	private void fillInteger(ArrayList<Number> input2) {
 		doubleInput.clear();
 		integerInput.clear();
@@ -291,6 +304,11 @@ public class Main extends Application{
 			integerInput.add(Integer.parseInt(v.toString()));}
 	}
 
+	/**
+	 * Given an ArrayList of Numbers, it converts them to Double and puts them
+	 * in an ArrayList used to pass the input to the animation
+	 * @param input2 The ArrayList of Numbers containing the input
+	 */
 	private void fillDouble(ArrayList<Number> input2) {
 		doubleInput.clear();
 		integerInput.clear();
@@ -299,9 +317,16 @@ public class Main extends Application{
 		}
 	}
 
+	/**
+	 * Sets up the bottom left part of the main window
+	 * @return An HBox containing a description of the algorithm 
+	 * and the pseudocode for the algorithm
+	 */
 	private HBox bottomLeft(){
 		HBox left=new HBox();
 		Text code=new Text();
+		StackPane codepane=new StackPane();
+		StackPane mergepane=new StackPane();
 		try{
 			f=new FileReader("src/file/mergesort.txt");
 			b=new BufferedReader(f);
@@ -312,7 +337,9 @@ public class Main extends Application{
 				line = b.readLine();}
 			code.setText(text);
 			f.close();}catch (Exception e){AlertBox.display("Fatal Error", "File not found");}
-		left.setPadding(new Insets(0,0,10,40));
+		left.setPadding(new Insets(0,0,0,30));
+		codepane.getChildren().add(code);
+		codepane.setPadding(new Insets(0,30,0,0));
 		Text merge=new Text();
 		try{
 			f=new FileReader("src/file/merge.txt");
@@ -323,13 +350,18 @@ public class Main extends Application{
 				text=text+"\n"+line;
 				line = b.readLine();}
 			merge.setText(text);
+			mergepane.getChildren().add(merge);
+			mergepane.setPadding(new Insets(20,0,0,30));
 			f.close();}catch (Exception e){AlertBox.display("Fatal Error", "File not found");}
 		
-		left.getChildren().addAll(code,merge);
+		left.getChildren().addAll(codepane,mergepane);
 		
 		return left;
 	}
 	
+	/**
+	 * Updates the comparisons counter adding 1 to it
+	 */
 	public static void updateComps()
 	{
 	   Integer c = Integer.parseInt(comps.getText());
@@ -337,6 +369,9 @@ public class Main extends Application{
 	   comps.setText(c.toString()); 
 	}
 
+	/**
+	 * Updates the array accesses counter adding 1 to it
+	 */
 	public static void updateAccesses()
 	{
 	   Integer a = Integer.parseInt(accs.getText());
@@ -345,10 +380,12 @@ public class Main extends Application{
 	    
 	}
 
+	/**
+	 * Clears the stats, setting them to 0
+	 */
 	public static void clearStats()
 	{
 	   comps.setText("0"); 
 	   accs.setText("0"); 
 	}
-
 }

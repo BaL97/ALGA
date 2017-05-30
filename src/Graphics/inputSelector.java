@@ -20,16 +20,32 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+/**
+ * Graphical interface for the input window 
+ * @author b_a_l
+ *
+ */
 public class inputSelector{
 	
 	public static ChoiceBox<String> type=setTypes();
 	private static ArrayList<Number> inputArray=new ArrayList<Number>();
+	private static ArrayList<Number> inputCopy = new ArrayList<Number>();
 	public static Boolean doubleflag;
 	private static Stage window;
 	
+	/**
+	 * Displays the input selection window
+	 * @return An ArrayList of Number that contains the values to sort
+	 */
 	public static ArrayList<Number> display(){
-		inputArray.clear();
 		
+		//Stage
+		window = new Stage();
+		window.setTitle("Load Input");
+		makeACopy(inputArray,inputCopy);
+		inputArray.clear();
+		//Main.doubleInput.clear();
+		//Main.integerInput.clear();
 		//File loader
 		FileChooser loader=new FileChooser();
 		loader.setTitle("Select the input file");
@@ -61,6 +77,9 @@ public class inputSelector{
 		Button ok=new Button("Ok");
 		Button cancel=new Button("Cancel");
 		Button clear=new Button("Clear");
+		/**
+		 * Button gen --> generate a random array of values
+		 */
 		Button gen=new Button("Generate >>");
 		Button add=new Button("Add >>");
 		setUpButtons(ok,cancel,clear,gen,add,input,n,data,loader, choice);
@@ -93,7 +112,21 @@ public class inputSelector{
 		window.setScene(scene);
 		window.showAndWait();
 		
+		if(inputArray.isEmpty())
+		    makeACopy(inputCopy,inputArray);
 		return inputArray;	
+	}
+
+	private static void makeACopy(ArrayList<Number> source, ArrayList<Number> dest)
+	{
+	    // TODO Auto-generated method stub
+	    if(!source.isEmpty())
+	    {
+		dest.clear();
+		for(Number n : source)
+		    dest.add(n);
+	    }
+	    
 	}
 
 	private static void setUpButtons(Button ok, Button cancel, Button clear, Button gen, Button add, TextArea input, TextField n, TextField data, FileChooser loader, ChoiceBox<String> choice)
@@ -122,11 +155,15 @@ public class inputSelector{
                             else if(type.getValue().equals("Integer"))
                                     doubleflag=false;
 			}
+			else
+			    doubleflag = null;
 		    }
 		    else 
 		    {
 			if(type.getValue() != "Select Input type...")
 			    doubleflag = type.getValue() == "Double" ? true : false;
+			else
+			    doubleflag = null;
 			add.setDisable(true);
 			data.setDisable(true);
 		    }
@@ -158,8 +195,7 @@ public class inputSelector{
 					input.clear();
 					input.appendText("Input preview:\n");
 					for(int i=0;i<inputArray.size();i++)
-						input.appendText(inputArray.get(i).toString()+"\n");
-					input.appendText("\nN = "+inputArray.size());}
+						input.appendText(inputArray.get(i).toString()+"\n");}
 				else
 					AlertBox.display("Input file error!","Please check your input file and try again");}
 				break;
@@ -172,12 +208,9 @@ public class inputSelector{
 			case "Manual Insert":
 				n.setDisable(true);
 				gen.setDisable(true);
-			    if(type.getValue() != "Select Input type...")
-			    {
 				add.setDisable(false);
 				data.setDisable(false);
 				break;
-			    }
 				}
 		});		
 		
@@ -187,21 +220,25 @@ public class inputSelector{
 	{
 	    // 
 		add.setOnAction(e->{
+		    Boolean noerrors = true;
 		    StringTokenizer tokenizer = new StringTokenizer(data.getText());
 		    try
 		    {
-                        while(tokenizer.hasMoreTokens())
+                        while(tokenizer.hasMoreTokens() && noerrors)
                         {
                             String datum = tokenizer.nextToken();
                             if(manual(datum))
-                                    input.appendText(datum +"\n");
-                            else
-                                    AlertBox.display("Input Error!", "Please check your input");
+                        	input.appendText(datum + "\n");
+
                         }
 		    }
 		    catch (NumberFormatException nfe)
 		    {
-			AlertBox.display("Input Error", "There is at least a non numeric value in the input");
+			if(doubleflag)
+                            AlertBox.display("Input Error", "There is at least a non Double value in the input");
+			else
+                            AlertBox.display("Input Error", "There is at least a non Integer value in the input");
+			noerrors = false;
 		    }
 		});
 
@@ -249,13 +286,22 @@ public class inputSelector{
                     if((inputArray.isEmpty()))
                             AlertBox.display("Input Error!", "The input is empty, please insert some data");
                     else
+                    {
+                	Main.integerInput.clear();
+                	Main.doubleInput.clear();
                             window.close();
+                    }
             });
             cancel.setOnAction(e->{
                     window.close();
             });			
 	}
 
+	/**
+	 * Sets up the choice box for the type selection
+	 * @return A ChoiceBox that lets the user select between possible input types
+	 * (Integer and Double)
+	 */
 	private static ChoiceBox<String> setTypes() {
 		ChoiceBox<String> type=new ChoiceBox<String>();
 		type.getItems().add("Integer");
@@ -265,6 +311,11 @@ public class inputSelector{
 		return type;
 	}
 
+	/**
+	 * Sets up the choice box for the input source selection
+	 * @return A ChoiceBox that lets the user select between possible input sources
+	 * (Random, Manual and from File)
+	 */
 	private static ChoiceBox<String> setChoices() {
 		ChoiceBox<String> choice=new ChoiceBox<String>();
 		choice.getItems().add("Input from file...");
@@ -275,35 +326,61 @@ public class inputSelector{
 		return choice;
 	}
 
+	/**
+	 * Given a numeric value, in the form of a String, it adds it to the inputArray
+	 * @param input 
+	 * @param value The value to insert into the array
+	 * @return true if the value is added correctly, false otherwise
+	 */
 	private static boolean manual(String value) throws NumberFormatException {
 		Double v;
 		Integer k;
-		
-		if(doubleflag){
-			try {
-				v=Double.parseDouble(value); //catch exceptions
-			} catch (NullPointerException e) {return false;}
-			catch (NumberFormatException nfe)
-			{
-			    throw nfe;
-			}
-			
-			inputArray.add(v);
-			return true;}
-		
-		else{
-			try {
-				k=Integer.parseInt(value);
-			} catch (NullPointerException e) {return false;}
-			catch (NumberFormatException nfe)
-			{
-			    throw nfe;
-			}
-			inputArray.add(k);
-			return true;
-		}	
+		if(doubleflag == null)
+		    AlertBox.display("Input Error", "Please set the input type");
+		else
+		{
+                    if(doubleflag)
+                    {
+                            if((inputArray.isEmpty())||(inputArray.get(0).getClass().toString().equals("class java.lang.Double")))
+                            {
+                                try {
+                                        v=Double.parseDouble(value); //catch exceptions
+                                } catch (NullPointerException e) {return false;}
+                                catch (NumberFormatException nfe)
+                                {
+                                    throw nfe;
+                                }
+
+                                inputArray.add(v);
+                                return true;
+                            }
+                            else
+                        	AlertBox.display("Input Error", "You selected Integer for the input type, you can't change it without clearing the input");
+                     }
+                    else
+                    {
+                            if((inputArray.isEmpty())||(inputArray.get(0).getClass().toString().equals("class java.lang.Integer"))){
+                            try {
+                                    k=Integer.parseInt(value);
+                            } catch (NullPointerException e) {return false;}
+                            catch (NumberFormatException nfe)
+                            {
+                                throw nfe;
+                            }
+                            inputArray.add(k);
+                            return true;
+                            }
+                            else
+                        	AlertBox.display("Input Error", "You selected Double for the input type, you can't change it without clearing the input");
+                    }
+		}
+		return false;
 	}
 
+	/**
+	 * Generates n random Integer elements between 0 and 999 and adds them to the inputArray
+	 * @param n The quantity of numbers to generate
+	 */
 	private static void integerRandom(Integer n) {
 		inputArray.clear();
 		Random random=new Random();
@@ -314,6 +391,10 @@ public class inputSelector{
 			inputArray.add(k);}
 	}
 	
+	/**
+	 * Generates n random Double elements between 0 and 1000 and adds them to the inputArray
+	 * @param n The quantity of numbers to generate
+	 */
 	private static void doubleRandom(Integer n){
 		inputArray.clear();
 		Double k;
@@ -323,6 +404,11 @@ public class inputSelector{
 				inputArray.add(k);}
 		}
 	
+	/**
+	 * Open the input file and loads the elements into the inputArray
+	 * @param n The file to be read
+	 * @return true if the file is opened and read correctly, false otherwise
+	 */
 	private static boolean fileOpen(File n){
 		if(n.exists())
 		inputArray.clear();

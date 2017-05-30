@@ -6,7 +6,8 @@ function merge (A[], left, center, right)
 
     while i ≤ center and j ≤ right do
        if A[i] ≤ A[j] then
-          B[k] ← A[i]		% B is a side array; can be global or passed as a parameter
+          B[k] ← A[i]		
+% B is a side array; can be global or passed as a parameter
           i ← i + 1
        else
           B[k] ← A[j]

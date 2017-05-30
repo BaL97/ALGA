@@ -6,10 +6,24 @@ import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.geometry.*;
 
+/**
+ * class used for the comunication between windows, the user can confirm or deny using yes or not buttons
+ * @author b_a_l
+ *
+ */
 public class ConfirmBox {
 	
 	static boolean answer;	
 	
+	/**
+	 * show the confirm box
+	 * @param title
+	 * set the title of the window
+	 * @param message
+	 * set the message of the confirm box
+	 * @return
+	 * return a boolean value, true if "Yes", false if "NO"
+	 */
 	public static boolean display(String title, String message){
 		Stage window=new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);

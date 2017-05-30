@@ -59,8 +59,13 @@ public class Visualizer extends Application
         Scene s;
         sequence = new SequentialTransition();
         
+	HBox stats = new HBox();
+	setUpStats(stats);
+	
+	Double barHeight = stats.getHeight();
+
         // The rectangles array is filled using the data passed
-        fillR(rectangles, HEIGHT, WIDTH);
+        fillR(rectangles, HEIGHT,barHeight, WIDTH);
         makeACopy();
 
 	// The rectangles are added to root group
@@ -68,8 +73,6 @@ public class Visualizer extends Application
 
 	s = new Scene(root, WIDTH, HEIGHT);
 	
-	HBox stats = new HBox();
-	setUpStats(stats);
 
 	root.getChildren().add(stats);
 	s.setFill(Color.BLACK);
@@ -78,22 +81,31 @@ public class Visualizer extends Application
 	stage.setScene(s);
 	stage.show();
 	
-	setDelays();
+	setDelays(LENGTH);
         Merge.mergesort(rectangles);
         sequence.play();
         Visualizer.playFlag = true;
         stage.setOnCloseRequest(e->{
+            sequence.getChildren().clear();
             Main.clearStats();
             Visualizer.playFlag = false;
         });
     }
     
+    /**
+     * Makes a copy of the rectangles array, in order to reset the scene if needed
+     */
     private static void makeACopy()
     {
 	for(int i = 0; i < rectangles.length; i++)
 	    copy.put(rectangles[i], rectangles[i].getTranslateX());
     }
 
+    /**
+     * Given an empty HBox, it generates the stats displayer and puts in the supplied
+     * HBox
+     * @param stats An empty, but initialized, HBox (not null)
+     */
     private static void setUpStats(HBox stats)
     {
 	stats.setLayoutX(0);
@@ -120,12 +132,106 @@ public class Visualizer extends Application
 	
     }
 
-    private static void setDelays()
+    /**
+     * Sets the static delay variables to the corresponding one defined in the Settings
+     * class
+     * @param lENGTH 
+     */
+    private static void setDelays(Integer LENGTH)
     {
-	swapDelay = Duration.millis(Settings.getSwapDelay());
-	compDelay = Duration.millis(Settings.getCompDelay());
+	if(Settings.getSpeed() == null)
+	{
+            swapDelay = Duration.millis(Settings.getSwapDelay());
+            compDelay = Duration.millis(Settings.getCompDelay());
+	}
+        else
+        {
+            Integer c = Settings.getSpeed();
+            if(LENGTH <= 50)
+            {
+        	switch(c)
+        	{
+        	case 0:
+        	    swapDelay = Duration.millis(500);
+        	    Settings.setSwapDelay(500.0);
+        	    compDelay = Duration.millis(500);
+        	    Settings.setCompDelay(500.0);
+        	    break;
+        	case 1:
+        	    swapDelay = Duration.millis(75);
+        	    compDelay = Duration.millis(200);
+        	    Settings.setSwapDelay(75.0);
+        	    Settings.setCompDelay(200.0);
+        	    break;
+        	case 2:
+        	    swapDelay = Duration.millis(5);
+        	    compDelay = Duration.millis(25);
+        	    Settings.setSwapDelay(5.0);
+        	    Settings.setCompDelay(25.0);
+        	    break;
+
+        	}
+            }
+            else if (LENGTH <= 200)
+            {
+        	switch(c)
+        	{
+        	case 0:
+        	    swapDelay = Duration.millis(70);
+        	    compDelay = Duration.millis(250);
+        	    Settings.setSwapDelay(70.0);
+        	    Settings.setCompDelay(250.0);
+        	    break;
+        	case 1:
+        	    swapDelay = Duration.millis(35);
+        	    compDelay = Duration.millis(100);
+        	    Settings.setSwapDelay(35.0);
+        	    Settings.setCompDelay(100.0);
+        	    break;
+        	case 2:
+        	    swapDelay = Duration.millis(1);
+        	    compDelay = Duration.millis(10);
+        	    Settings.setSwapDelay(1.0);
+        	    Settings.setCompDelay(10.0);
+        	    break;
+
+        	}
+            }
+            else
+            {
+        	switch(c)
+        	{
+        	case 0:
+        	    swapDelay = Duration.millis(35);
+        	    compDelay = Duration.millis(70);
+        	    Settings.setSwapDelay(35.0);
+        	    Settings.setCompDelay(70.0);
+        	    break;
+        	case 1:
+        	    swapDelay = Duration.millis(10);
+        	    compDelay = Duration.millis(10);
+        	    Settings.setSwapDelay(10.0);
+        	    Settings.setCompDelay(10.0);
+        	    break;
+        	case 2:
+        	    swapDelay = Duration.millis(1);
+        	    compDelay = Duration.millis(1);
+        	    Settings.setSwapDelay(1.0);
+        	    Settings.setCompDelay(1.0);
+        	    break;
+
+        	}
+        	
+            }
+        }
+        	
     }
 
+    /**
+     * If the input choice was for Double, this method copied the input to the
+     * array used for generating the rectangles in the animation
+     * @param L An ArrayList of Double that contains the input for the sort animation
+     */
     public static void handleDoubleArray(ArrayList<Double> L)
     {
     	doubleArray = new Double[L.size()];
@@ -138,6 +244,11 @@ public class Visualizer extends Application
     	doubleFlag = true;
     }
     
+    /**
+     * If the input choice was for Integer, this method copied the input to the
+     * array used for generating the rectangles in the animation
+     * @param L An ArrayList of Integer that contains the input for the sort animation
+     */
     public static void handleIntArray(ArrayList<Integer> L)
     {
     	integerArray = new Integer[L.size()];
@@ -175,9 +286,10 @@ public class Visualizer extends Application
      * relationship
      * @param rectangles The array of Rectangles to be filled
      * @param HEIGHT The height of the area in which the values are represented
+     * @param barHeight 
      * @param WIDTH The width of the area in which the values are represented
      */
-    public static void fillR(Rectangle[] rectangles, Integer HEIGHT, Integer WIDTH)
+    public static void fillR(Rectangle[] rectangles, Integer HEIGHT, Double barHeight, Integer WIDTH)
     {
 	
 	int l = doubleFlag ? doubleArray.length : integerArray.length;
@@ -206,9 +318,9 @@ public class Visualizer extends Application
 	     */
 	    Double height;
 	    if(doubleFlag)
-		height = doubleArray[i] / doubleMax * HEIGHT;
+		height = doubleArray[i] / doubleMax * (HEIGHT - barHeight);
 	    else
-		height = integerArray[i] / (double) intMax * HEIGHT;
+		height = integerArray[i] / (double) intMax * (HEIGHT - barHeight);
 	    // The y position of the top-left corner of the rectangle
 	    Double yPosition = (HEIGHT - height);
 
@@ -314,9 +426,18 @@ public class Visualizer extends Application
 	return start;
     }
 
+    /**
+     * Updates the counter for array accesses in the Main class
+     */
     public static void accessesUpdate()
     {
 	
+	/*
+	 * This is a fake transition, which lasts one second, that has no visible
+	 * effect but is added to the sequence of the animation and, upon being finished,
+	 * updates the array accesses counter, so that the counter  increases during the 
+	 * animation
+	 */
 	Transition t = new Transition()
 	{
 	    
@@ -334,28 +455,46 @@ public class Visualizer extends Application
 	
     }
 
+    /**
+     * Plays the animation
+     */
     public static void play()
     {
 	sequence.play();
     }
 
+    /**
+     * Returns the state of the current animation, if an animation is running
+     * @return true if an animation is currently running, false otherwise
+     */
     public static boolean isPlaying()
     {
 	return Visualizer.playFlag;
     }
 
+    /**
+     * Pauses the animation
+     */
     public static void pause()
     {
         sequence.pause();
     }
 
+    /**
+     * Stops the animation, sets the rectangles back to their original positions,
+     * clears the stats and puts the animation in step-by-step mode
+     */
     public static void stopAnimation()
     {
         sequence.stop();
+        Settings.setMode(false);
         Main.clearStats();
         reset();
     }
 
+    /**
+     * Puts all the rectangles in the animation in their original position before sorting
+     */
     private static void reset()
     {
 	for(int i = 0; i < rectangles.length; i++)

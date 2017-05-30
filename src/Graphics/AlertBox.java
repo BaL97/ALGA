@@ -6,10 +6,23 @@ import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.geometry.*;
 
+/**
+ * Box to show messages during the execution of the program used for error messages
+ * @author b_a_l
+ *
+ */
 public class AlertBox {
 	
 	static boolean answer;	
 	
+	/**
+	 * show the alert box
+	 * @param title
+	 * set the title of the window
+	 * @param message
+	 * set the message to show
+	 * @author b_a_l
+	 */
 	public static void display(String title, String message){
 		Stage window=new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
