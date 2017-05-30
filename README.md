@@ -3,7 +3,7 @@
 ALGA (ALGorithm Animator) is a java applet that animates and tries to explain, in a visual way, an algorithm. In this
 case, Mergesort. In orderd to run it you need to have a working java environment installed (1.8 is recommended)
 
-## How does it work?
+### How does it work?
 
 The mechanics are very simple. The user can load numeric values, of type Integer or Double, in three ways: 
 
@@ -19,7 +19,7 @@ Once the input has been successfully loaded, the user can adjust the animation s
 
 There are fundamentally two settings:
 
-1. the animation "speed"
+1. **The animation "speed"**
 
     The animation speed can be automatic calculated based on the number of values, by choosing on of the three available
     options:
@@ -31,10 +31,30 @@ There are fundamentally two settings:
     animation.
 
 
-2. the animation mode, which can be:
+2. **The animation mode**, which can be:
 
     1. Step-by-Step: the user is able to advance the animation one step at a time
     2. Motion: the animation runs by itself
+
+### Notes on the input size
+
+The input size can be virtually any, but the application tends to become slower to load the animation as the input size
+increases. For optimal experience, and input size less than or equal to 250 is recommended, and a size of 1000 should be
+considered as a reasonable upper limit
+
+### Input file syntax
+
+The input file must respect this syntax:
+
+```
+TYPE value1 value2 ... valuen
+```
+
+where TYPE can be Integer or Double
+
+### About and Github page
+
+In the `About` menu the user can find simple instructions to use the app and the github page for the project
 
 
 
