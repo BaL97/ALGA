@@ -160,8 +160,8 @@ public class Main extends Application{
                 MenuItem exit=new MenuItem("Exit");
                 file.getItems().add(exit); //exit the program
                 load.setOnAction(e->{
-                //        inputtext.clear();
-                //        inputtext.setText("Data:\n\n");
+                        inputtext.clear();
+                        inputtext.setText("Data:\n\n");
                         input=inputSelector.display();
                         for(int i=0;i<input.size();i++){
                                 inputtext.appendText(input.get(i)+"\n");				

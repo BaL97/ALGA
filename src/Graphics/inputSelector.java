@@ -224,7 +224,7 @@ public class inputSelector{
 		    StringTokenizer tokenizer = new StringTokenizer(data.getText());
 		    try
 		    {
-		    			input.clear();
+                        input.clear();
                         while(tokenizer.hasMoreTokens() && noerrors)
                         {
                             String datum = tokenizer.nextToken();

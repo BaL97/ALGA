@@ -62,10 +62,8 @@ public class Visualizer extends Application
 	HBox stats = new HBox();
 	setUpStats(stats);
 	
-	Double barHeight = stats.getHeight();
-
         // The rectangles array is filled using the data passed
-        fillR(rectangles, HEIGHT,barHeight, WIDTH);
+        fillR(rectangles, HEIGHT, WIDTH);
         makeACopy();
 
 	// The rectangles are added to root group
@@ -286,10 +284,9 @@ public class Visualizer extends Application
      * relationship
      * @param rectangles The array of Rectangles to be filled
      * @param HEIGHT The height of the area in which the values are represented
-     * @param barHeight 
      * @param WIDTH The width of the area in which the values are represented
      */
-    public static void fillR(Rectangle[] rectangles, Integer HEIGHT, Double barHeight, Integer WIDTH)
+    public static void fillR(Rectangle[] rectangles, Integer HEIGHT, Integer WIDTH)
     {
 	
 	int l = doubleFlag ? doubleArray.length : integerArray.length;
@@ -317,10 +314,11 @@ public class Visualizer extends Application
 	     * magnitude in the array
 	     */
 	    Double height;
+	    // 20 is subtracted to leave room for the stats bar
 	    if(doubleFlag)
-		height = doubleArray[i] / doubleMax * (HEIGHT - barHeight);
+		height = doubleArray[i] / doubleMax * (HEIGHT - 20);
 	    else
-		height = integerArray[i] / (double) intMax * (HEIGHT - barHeight);
+		height = integerArray[i] / (double) intMax * (HEIGHT - 20);
 	    // The y position of the top-left corner of the rectangle
 	    Double yPosition = (HEIGHT - height);
 

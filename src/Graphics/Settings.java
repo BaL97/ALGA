@@ -131,7 +131,7 @@ public class Settings {
                         }
 					}
                     if(!(selectmode.getValue().equals("Select mode..."))){
-                            if(selectmode.getValue().equals("Animation"))
+                            if(selectmode.getValue().equals("Motion"))
                                     setMode(true);
                             else
                                     setMode(false);
@@ -166,13 +166,13 @@ public class Settings {
             selectmode.getItems().add("Select mode...");
             Boolean mode = Settings.getMode();
             if(mode == true)
-                selectmode.setValue("Animation");
+                selectmode.setValue("Motion");
             else if (mode == false)
-                selectmode.setValue("Single Step");
+                selectmode.setValue("Step-by-step");
             else
 				selectmode.setValue("Select mode...");
-            selectmode.getItems().add("Animation");
-            selectmode.getItems().add("Single Step");
+            selectmode.getItems().add("Motion");
+            selectmode.getItems().add("Step-by-step");
             pane2.getChildren().add(selectmode);
             pane2.setPadding(new Insets(10,10,10,10));
 	}
