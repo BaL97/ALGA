@@ -382,10 +382,19 @@ public class Main extends Application{
 
 	/**
 	 * Clears the stats, setting them to 0
+	 * @param closing A boolean telling if the animation window is being closed
 	 */
-	public static void clearStats()
+	public static void clearStats(Boolean closing)
 	{
-	   comps.setText("0"); 
-	   accs.setText("0"); 
+	    if(!closing)
+	    {
+               comps.setText("0"); 
+               accs.setText("0"); 
+	    }
+	    else
+	    {
+		comps = new Label("0");
+		accs = new Label("0");
+	    }
 	}
 }

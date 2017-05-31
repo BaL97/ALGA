@@ -51,7 +51,7 @@ public class Settings {
 
 		setUpSpeedSelector(selectspeed,pane1);
 		setUpModeSelector(selectmode,pane2);
-		setUpDelays(comp,swap,pane3);
+		setUpDelays(comp,swap,selectspeed,pane3);
 		choices.setPadding(new Insets(20,20,0,20));
 		choices.getChildren().addAll(pane1,pane2,pane3);
 			
@@ -72,6 +72,16 @@ public class Settings {
 		window.showAndWait();
 	}
 
+	/**
+	 * Auxiliary method to set up the layout of the Settings window
+	 * @param layout The layout BorderdPane
+	 * @param choice The choice GridPane
+	 * @param yesButton The ok button
+	 * @param noButton The cancel button
+	 * @param label The label for the top of the window
+	 * @param choices A VBox to organize all the elements in the window in a vertical
+	 * fashion
+	 */
 	private static void setUpLayout(BorderPane layout, GridPane choice, Button yesButton, Button noButton,
 		Label label, VBox choices)
 	{
@@ -89,6 +99,14 @@ public class Settings {
 	    
 	}
 
+	/**
+	 * Auxiliary method to set up the buttons
+	 * @param yesButton The ok button
+	 * @param noButton The cancel button
+	 * @param selectspeed The speed selection choicebox
+	 * @param selectmode The mode selection chiocebox
+	 * @param window The window stage
+	 */
 	private static void setUpButtons(Button yesButton, Button noButton, ChoiceBox<String> selectspeed, ChoiceBox<String> selectmode, Stage window)
 	{
 		noButton.autosize();
@@ -111,6 +129,7 @@ public class Settings {
                     }
                     else
                     {
+                	setSpeed(null);
                 	Boolean swCheck = false,compCheck = false;
                         try
                         {
@@ -145,7 +164,14 @@ public class Settings {
 	    
 	}
 
-	private static void setUpDelays(TextField comp2, TextField swap2, VBox pane3)
+	/**
+	 * Auxiliary method to set up the delays boxes
+	 * @param comp2 Comparison delay text field
+	 * @param swap2 Rectangle movement delay text field
+	 * @param selectspeed 
+	 * @param pane3 The VBox that contains the boxes
+	 */
+	private static void setUpDelays(TextField comp2, TextField swap2, ChoiceBox<String> selectspeed, VBox pane3)
 	{
 		Text compdel = new Text("Comparison delay (in ms)");
 		Text swapText = new Text("Rectangles movement delay (in ms)");
@@ -155,12 +181,22 @@ public class Settings {
 		comp.setMaxWidth(60);
 		comp.setPrefWidth(40);
 		comp.setText(Settings.getCompDelay() == null ? String.valueOf(0) : Settings.getCompDelay().toString());
+		if(selectspeed.getValue() != "Select speed...")
+		{
+		    swap.setDisable(true);
+		    comp.setDisable(true);
+		}
 		pane3.getChildren().addAll(compdel,comp,swapText,swap);
 		pane3.setPadding(new Insets(20,10,10,10));
 		pane3.setAlignment(Pos.CENTER);
 	    
 	}
 
+	/**
+	 * Auxiliary method to set up the mode selection menu
+	 * @param selectmode The mode selection ChoiceBox
+	 * @param pane2 The VBox that contains the box and its label
+	 */
 	private static void setUpModeSelector(ChoiceBox<String> selectmode, StackPane pane2)
 	{
             selectmode.getItems().add("Select mode...");
@@ -177,6 +213,11 @@ public class Settings {
             pane2.setPadding(new Insets(10,10,10,10));
 	}
 
+	/**
+	 * Auxiliary method to set up the speed selection menu
+	 * @param selectspeed The speed selection ChoiceBox
+	 * @param pane1 The VBox that contains the box and its label
+	 */
 	private static void setUpSpeedSelector(ChoiceBox<String> selectspeed, StackPane pane1)
 	{
 		selectspeed.getItems().add("Select speed...");
@@ -275,6 +316,10 @@ public class Settings {
 	    Settings.compDelay = compDelay;
 	}
 	
+	/**
+	 * Returns the current mode
+	 * @return true if mode is Motion, false otherwise
+	 */
 	public static Boolean getMode()
 	{
 	    return Settings.mode;

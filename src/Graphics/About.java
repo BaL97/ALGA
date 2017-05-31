@@ -51,6 +51,11 @@ public class About {
 		window.showAndWait();
 	}
 
+	/**
+	 * Reads the instruction from the instruction file and puts them in a text
+	 * in the About window
+	 * @param instructions
+	 */
 	private static void readInstructions(Text instructions)
 	{
 	    instructions.setText("");

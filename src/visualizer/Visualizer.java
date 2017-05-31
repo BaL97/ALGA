@@ -85,7 +85,7 @@ public class Visualizer extends Application
         Visualizer.playFlag = true;
         stage.setOnCloseRequest(e->{
             sequence.getChildren().clear();
-            Main.clearStats();
+            Main.clearStats(true);
             Visualizer.playFlag = false;
         });
     }
@@ -133,7 +133,7 @@ public class Visualizer extends Application
     /**
      * Sets the static delay variables to the corresponding one defined in the Settings
      * class
-     * @param lENGTH 
+     * @param lENGTH The size of the array
      */
     private static void setDelays(Integer LENGTH)
     {
@@ -486,7 +486,7 @@ public class Visualizer extends Application
     {
         sequence.stop();
         Settings.setMode(false);
-        Main.clearStats();
+        Main.clearStats(false);
         reset();
     }
 

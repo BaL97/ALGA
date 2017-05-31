@@ -129,6 +129,19 @@ public class inputSelector{
 	    
 	}
 
+	/**
+	 * Sets up the buttons of the window
+	 * @param ok The ok button
+	 * @param cancel The cancel button
+	 * @param clear The clear button
+	 * @param gen The gen button
+	 * @param add The add button
+	 * @param input The text field for the input preview
+	 * @param n The text field for the dimension input
+	 * @param data The text field for the values
+	 * @param loader The file loader
+	 * @param choice The source choice box
+	 */
 	private static void setUpButtons(Button ok, Button cancel, Button clear, Button gen, Button add, TextArea input, TextField n, TextField data, FileChooser loader, ChoiceBox<String> choice)
 	{
 		setUpOkAndCancelButtons(ok,cancel);
@@ -143,6 +156,12 @@ public class inputSelector{
 	    
 	}
 
+	/**
+	 * Auxiliary method to set up the type choice box
+	 * @param choice The source choice box
+	 * @param add The add button
+	 * @param data The data text field
+	 */
 	private static void setUpType(ChoiceBox<String> choice, Button add, TextField data)
 	{
 		type.setOnAction(e->{
@@ -171,6 +190,16 @@ public class inputSelector{
 	    
 	}
 
+	/**
+	 * Auxiliary method to set up the choice ChoiceBox
+	 * @param choice The choice ChoiceBox to set up
+	 * @param add The add button
+	 * @param data The data text field
+	 * @param n The n text field
+	 * @param gen The gen button
+	 * @param input The input preview text area
+	 * @param loader The file loader
+	 */
 	private static void setUpChoice(ChoiceBox<String> choice, Button add, TextField data, TextField n, Button gen,
 		TextArea input, FileChooser loader)
 	{
@@ -216,6 +245,12 @@ public class inputSelector{
 		
 	}
 
+	/**
+	 * Auxiliary method to set up the AddButton
+	 * @param add The add button
+	 * @param data The data text field
+	 * @param input The input preview text area
+	 */
 	private static void setUpAddButton(Button add, TextField data, TextArea input)
 	{
 	    // 
@@ -245,7 +280,14 @@ public class inputSelector{
 
 	    
 	}
-
+	
+	/**
+	 * Auxiliary method to set up the clear and the gen buttons
+	 * @param clear The clear button
+	 * @param gen The gen button
+	 * @param input The input preview text area
+	 * @param n The n textfield
+	 */
 	private static void setUpClearAndGenButtons(Button clear, Button gen, TextArea input, TextField n)
 	{
 		clear.setOnAction(e->{
@@ -281,6 +323,11 @@ public class inputSelector{
 	    
 	}
 
+	/**
+	 * Auxiliary method to set up the ok and cancel button
+	 * @param ok The ok button
+	 * @param cancel The cancel button
+	 */
 	private static void setUpOkAndCancelButtons(Button ok, Button cancel)
 	{
             ok.setOnAction(e->{

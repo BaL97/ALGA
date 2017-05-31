@@ -36,6 +36,10 @@ There are fundamentally two settings:
     1. Step-by-Step: the user is able to advance the animation one step at a time
     2. Motion: the animation runs by itself
 
+### How to run it
+
+Clone the repository, `cd` into it, then type `java -jar ALGA.jar` and press `ENTER`
+
 ### Notes on the input size
 
 The input size can be virtually any, but the application tends to become slower to load the animation as the input size
